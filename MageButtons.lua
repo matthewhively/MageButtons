@@ -117,15 +117,12 @@ local btnSize = 0
 local function make_spell_table(spell_id_list)
 	local tbl = {}
 	--print(spell_id_list)
-
+	
 	for i = 1, #spell_id_list, 1 do
 		if IsSpellKnown(spell_id_list[i]) then
-			print(spell_id_list[i] .. " is known")
 			local name = GetSpellInfo(spell_id_list[i])
-			local subtext = GetSpellSubtext(spell_id_list[i])  -- NOTE will return nil at first unless its locally cached
-			if subtext ~= nil and subtext ~= "" then
-				name = name .. "(" .. subtext .. ")"
-			end
+			local subtext = GetSpellSubtext(spell_id_list[i]) or ''  -- NOTE will return nil at first unless its locally cached
+			name = name .. "(" .. subtext .. ")"  -- For some reason the "()" are required for tooltips
 			table.insert(tbl, name)
 		end
 	end
