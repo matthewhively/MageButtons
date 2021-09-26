@@ -116,127 +116,130 @@ local function onevent(self, event, arg1, ...)
 	if(event == "ADDON_LOADED" and arg1 == "MageButtons") then	
 
 		-- Needs a slight delay on initial startup, don't know why
-		C_Timer.After(6, function()
+		C_Timer.After(0, function()
+			C_Timer.After(2, function()
 			
-			
-			-- Set up lists of spells
-			WaterSpells = {5504, 5505, 5506, 6127, 10138, 10139, 10140, 37420, 43987, 27090}
-			FoodSpells = {587, 597, 990, 6129, 10144, 10145, 28612, 33717}
-			TelportsSpells = {}
-			PortalsSpells = {}
-			if UnitFactionGroup("player") == "Alliance" then
-				TeleportsSpells = {3565, 3561, 3562, 32271, 49359, 33690}
-				PortalsSpells = {11419, 10059, 11416, 32266, 49360, 33691}
-			else
-				TeleportsSpells = {3566, 3563, 3567, 32272, 49358, 35715}
-				PortalsSpells = {11420, 11418, 11417, 32267, 49361, 35717}
-			end
-			GemsSpells = {759, 3552, 10053, 10054, 27101}
-			
-			if IsSpellKnown(12826) then sheep = 12826
-			elseif IsSpellKnown(12825) then sheep = 12825
-			elseif IsSpellKnown(12824) then sheep = 12824
-			elseif IsSpellKnown(118) then sheep = 118
-			else sheep = 9999 end
-			PolymorphSpells = {sheep, 28272, 28271, 28270}
-			
-			
-			local spellTables = {}
-			spellTables["Water"] = {5504, 5505, 5506, 6127, 10138, 10139, 10140}
-			spellTables["Food"] = {587, 597, 990, 6129, 10144, 10145, 28612}
-			if UnitFactionGroup("player") == "Alliance" then
-				spellTables["Teleports"] = {3565, 3561, 3562}
-				spellTables["Portals"] = {11419, 10059, 11416}
-			else
-				spellTables["Teleports"] = {3566, 3563, 3567}
-				spellTables["Portals"] = {11420, 11418, 11417}
-			end
-			spellTables["Gems"] = {759, 3552, 10053, 10054}
-			spellTables["Polymorph"] = {sheep, 28272, 28271, 28270}
-			
-			----------------------------------------
-			-- Create tables from the spell lists --
-			----------------------------------------
-			for k = 1, #buttonTypes, 1 do
-				local btnType = buttonTypes[k]
-				
-				-- For each type of spell in buttonTypes table
-				--   get number of spells
-				--   create table of that type with spells that are known (trained)
-				if btnType ~= nil and btnType ~= "none" then
-
-					local obj2 = btnType .. [[Table = {}
-					for i = 1, #]] .. btnType .. [[Spells, 1 do
-						if IsSpellKnown(]] .. btnType .. [[Spells[i]) then
-							local ]] .. btnType .. [[Name = GetSpellInfo(]] .. btnType .. [[Spells[i]) .. "(" .. GetSpellSubtext(]] .. btnType .. [[Spells[i]) .. ")"
-							--]] .. btnType .. [[Table[i] = ]] .. btnType .. [[Name
-							table.insert(]] .. btnType .. [[Table, ]] .. btnType .. [[Name)
-						end
-					end	]]
-					
-					-- execute the above command
-					local cmdRun2 = assert(loadstring(obj2))
-					cmdRun2()
+				-- Set up lists of spells
+				WaterSpells = {5504, 5505, 5506, 6127, 10138, 10139, 10140, 37420, 43987, 27090}
+				FoodSpells = {587, 597, 990, 6129, 10144, 10145, 28612, 33717}
+				TelportsSpells = {}
+				PortalsSpells = {}
+				if UnitFactionGroup("player") == "Alliance" then
+					TeleportsSpells = {3565, 3561, 3562, 32271, 49359, 33690}
+					PortalsSpells = {11419, 10059, 11416, 32266, 49360, 33691}
+				else
+					TeleportsSpells = {3566, 3563, 3567, 32272, 49358, 35715}
+					PortalsSpells = {11420, 11418, 11417, 32267, 49361, 35717}
 				end
-			end
-			
-			-- Get saved frame location
-			local relPoint, anchorX, anchorY = addon:getAnchorPosition()
-			MageButtonsConfig:ClearAllPoints()
-			MageButtonsConfig:SetPoint(relPoint, UIParent, relPoint, anchorX, anchorY)
-			
-			
-
-			addon:makeBaseButtons()
-
-			-----------------
-			-- Data Broker --
-			-----------------
-			lockStatus = addon:getSV("framelock", "lock")
-			
-			db = LibStub("AceDB-3.0"):New("MageButtonsDB", SettingsDefaults)
-			MageButtonsDB.db = db;
-			MageButtonsMinimapData = ldb:NewDataObject("MageButtons",{
-				type = "data source",
-				text = "MageButtons",
-				icon = "Interface/Icons/Spell_Holy_MagicalSentry.blp",
-				OnClick = function(self, button)
-					if button == "RightButton" then
-						if IsShiftKeyDown() then
-							MageButtons:maptoggle("0")
-							print("MageButtons: Hiding icon, re-enable with: /MageButtons minimap 1")
-						else
-							InterfaceOptionsFrame_OpenToCategory(mbPanel)
-							InterfaceOptionsFrame_OpenToCategory(mbPanel)
-							InterfaceOptionsFrame_OpenToCategory(mbPanel)
-						end
-					
-					elseif button == "LeftButton" then
-						if lockStatus == 0 then
-							-- Not locked, lock it and save the anchor position
-							addon:lockAnchor()
-						else
-							-- locked, unlock
-							addon:unlockAnchor()
-						end
-					end
-				end,
+				GemsSpells = {759, 3552, 10053, 10054, 27101}
 				
-				-- Minimap Icon tooltip
-				OnTooltipShow = function(tooltip)
-					tooltip:AddLine("|cffffffffMageButtons|r\nLeft-click to lock/unlock.\nRight-click to configure.\nShift+Right-click to hide minimap button.")
-				end,
-			})
-			
-			-- display the minimap icon?
-			local mmap = addon:getSV("minimap", "icon") or 1
-			if mmap == 1 then
-				MageButtonsMinimapIcon:Register("mageButtonsIcon", MageButtonsMinimapData, MageButtonsDB)
-				addon:maptoggle(1)
-			else
-				addon:maptoggle(0)
-			end
-		end); --end of 1 second delay
+				if IsSpellKnown(12826) then sheep = 12826
+				elseif IsSpellKnown(12825) then sheep = 12825
+				elseif IsSpellKnown(12824) then sheep = 12824
+				elseif IsSpellKnown(118) then sheep = 118
+				else sheep = 9999 end
+				PolymorphSpells = {sheep, 28272, 28271, 28270}
+				
+				
+				local spellTables = {}
+				spellTables["Water"] = {5504, 5505, 5506, 6127, 10138, 10139, 10140}
+				spellTables["Food"] = {587, 597, 990, 6129, 10144, 10145, 28612}
+				if UnitFactionGroup("player") == "Alliance" then
+					spellTables["Teleports"] = {3565, 3561, 3562}
+					spellTables["Portals"] = {11419, 10059, 11416}
+				else
+					spellTables["Teleports"] = {3566, 3563, 3567}
+					spellTables["Portals"] = {11420, 11418, 11417}
+				end
+				spellTables["Gems"] = {759, 3552, 10053, 10054}
+				spellTables["Polymorph"] = {sheep, 28272, 28271, 28270}
+				
+				----------------------------------------
+				-- Create tables from the spell lists --
+				----------------------------------------
+				for k = 1, #buttonTypes, 1 do
+					local btnType = buttonTypes[k]
+					
+					-- For each type of spell in buttonTypes table
+					--   get number of spells
+					--   create table of that type with spells that are known (trained)
+					if btnType ~= nil and btnType ~= "none" then
+
+						local obj2 = btnType .. [[Table = {}
+						for i = 1, #]] .. btnType .. [[Spells, 1 do
+							if IsSpellKnown(]] .. btnType .. [[Spells[i]) then
+								--print("****", ]] .. btnType .. [[Spells[i], "****")
+								local ]] .. btnType .. [[Name = GetSpellInfo(]] .. btnType .. [[Spells[i]) .. "(" .. GetSpellSubtext(]] .. btnType .. [[Spells[i]) .. ")"
+								--print("^^^^", ]] .. btnType .. [[Name, "^^^^")
+								--]] .. btnType .. [[Table[i] = ]] .. btnType .. [[Name
+								table.insert(]] .. btnType .. [[Table, ]] .. btnType .. [[Name)
+							end
+						end	]]
+						
+						-- execute the above command
+						local cmdRun2 = assert(loadstring(obj2))
+						cmdRun2()
+					end
+				end
+				
+				-- Get saved frame location
+				local relPoint, anchorX, anchorY = addon:getAnchorPosition()
+				MageButtonsConfig:ClearAllPoints()
+				MageButtonsConfig:SetPoint(relPoint, UIParent, relPoint, anchorX, anchorY)
+				
+				
+
+				addon:makeBaseButtons()
+
+				-----------------
+				-- Data Broker --
+				-----------------
+				lockStatus = addon:getSV("framelock", "lock")
+				
+				db = LibStub("AceDB-3.0"):New("MageButtonsDB", SettingsDefaults)
+				MageButtonsDB.db = db;
+				MageButtonsMinimapData = ldb:NewDataObject("MageButtons",{
+					type = "data source",
+					text = "MageButtons",
+					icon = "Interface/Icons/Spell_Holy_MagicalSentry.blp",
+					OnClick = function(self, button)
+						if button == "RightButton" then
+							if IsShiftKeyDown() then
+								MageButtons:maptoggle("0")
+								print("MageButtons: Hiding icon, re-enable with: /MageButtons minimap 1")
+							else
+								InterfaceOptionsFrame_OpenToCategory(mbPanel)
+								InterfaceOptionsFrame_OpenToCategory(mbPanel)
+								InterfaceOptionsFrame_OpenToCategory(mbPanel)
+							end
+						
+						elseif button == "LeftButton" then
+							if lockStatus == 0 then
+								-- Not locked, lock it and save the anchor position
+								addon:lockAnchor()
+							else
+								-- locked, unlock
+								addon:unlockAnchor()
+							end
+						end
+					end,
+					
+					-- Minimap Icon tooltip
+					OnTooltipShow = function(tooltip)
+						tooltip:AddLine("|cffffffffMageButtons|r\nLeft-click to lock/unlock.\nRight-click to configure.\nShift+Right-click to hide minimap button.")
+					end,
+				})
+				
+				-- display the minimap icon?
+				local mmap = addon:getSV("minimap", "icon") or 1
+				if mmap == 1 then
+					MageButtonsMinimapIcon:Register("mageButtonsIcon", MageButtonsMinimapData, MageButtonsDB)
+					addon:maptoggle(1)
+				else
+					addon:maptoggle(0)
+				end
+			end); --end of 2 second delay
+		end); --end of 0 second delay
 	end
 end
 
@@ -674,6 +677,7 @@ function addon:makeButtons(btnType, typeTable)
 			buttonBackdrop.texture:SetAllPoints(buttonBackdrop)
 			buttonBackdrop:SetBackdrop({bgFile = "Interface\\ChatFrame\\ChatFrameBackground"})
 			buttonBackdrop:SetBackdropColor(backdropRed, backdropGreen, backdropBlue, backdropAlpha)
+			buttonBackdrop:SetFrameStrata("HIGH")
 			
 			if mouseover == 1 then
 				buttonBackdrop:SetScript("OnEnter",function(self,motion)
