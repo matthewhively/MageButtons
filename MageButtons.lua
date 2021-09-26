@@ -67,14 +67,13 @@ SlashCmdList["MAGEBUTTONS"] = function(inArgs)
 			addon:lockAnchor()
 		end
 	elseif wArgs == "lock" then
-		-- TODO: this doesn't seem to work
-		magebuttons:lockAnchor()
+		MageButtons:lockAnchor()
 	elseif wArgs == "config" then
 		InterfaceOptionsFrame_OpenToCategory(mbPanel)
 		InterfaceOptionsFrame_OpenToCategory(mbPanel)
 	else
 		print("usage: /MageButtons lock|move|unlock")
-		-- TODO: usage is inconsistent, fix that
+		-- TODO: usage is inconsistent, fix that.... unlock shouldn't toggle the status
 	end
 
 end
