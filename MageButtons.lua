@@ -12,12 +12,13 @@ local AceGUI = LibStub("AceGUI-3.0")
 MageButtons = LibStub("AceAddon-3.0"):NewAddon("MageButtons", "AceEvent-3.0")
 local addonName, addon = ...
 local ldb = LibStub("LibDataBroker-1.1")
-local channel = "RAID"
+--local channel = "RAID"
 local MageButtonsMinimapIcon = LibStub("LibDBIcon-1.0")
 local db
-local castTable = {}
+--local castTable = {}
 local lockStatus = 1
 
+-- The global Table
 _G[addonName] = addon
 addon.healthCheck = true
 
@@ -83,8 +84,8 @@ SLASH_MAGEBUTTONS1 = "/magebuttons"
 xOffset = 0
 yOffset = 0
 totalHeight, totalWidth, backdropPadding = 0, 0, 5
-backdropAnchor = "TOP"
-backdropParentAnchor = "BOTTOM"
+--backdropAnchor = "TOP"
+--backdropParentAnchor = "BOTTOM"
 --local backdropOffset = 0
 local frameBG = "Interface\\ChatFrame\\ChatFrameBackground"
 local growthDir, menuDir, btnSize, padding, border, backdropPadding, backdropRed, backdropGreen, backdropBlue, backdropAlpha, mouseover = nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil
@@ -111,7 +112,7 @@ MageButtonsFrame:SetBackdropColor(0, 0, 0, 0)
 local buttonTypes = { "Water", "Food", "Teleports", "Portals", "Gems", "Polymorph"}
 local btnSize = 0
 
-local spellNames = {}
+--local spellNames = {}
 
 -- Helper functions
 local function make_spell_table(spell_id_list)
@@ -524,8 +525,8 @@ function addon:makeBaseButtons()
 				xOffset = xOffset + (btnSize + padding)
 				totalHeight = btnSize + backdropPadding + backdropPadding
 				totalWidth = xOffset + backdropPadding
-				backdropAnchor = "TOPLEFT"
-				backdropParentAnchor = "BOTTOM"
+				--backdropAnchor = "TOPLEFT"
+				--backdropParentAnchor = "BOTTOM"
 				--backdropOffset = -(btnSize / 2 + backdropPadding)
 			else
 				print("MageButtons: Invalid growth direction")

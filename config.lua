@@ -237,8 +237,8 @@ local function onevent(self, event, arg1, ...)
 		local buttonvalue = MageButtonsDB["btnNumber" .. btnNumber]
 
 		-- list of choices
-		buttonTypeTable = { "Water", "Food", "Teleports", "Portals", "Gems", "Polymorph", "none"}
-		categories = { "Water", "Food", "Teleports", "Portals", "Gems", "Polymorph"}
+		--buttonTypeTable = { "Water", "Food", "Teleports", "Portals", "Gems", "Polymorph", "none"}
+		--categories = { "Water", "Food", "Teleports", "Portals", "Gems", "Polymorph"}
 		
 		local i = 1
 		local yoffset = -30
