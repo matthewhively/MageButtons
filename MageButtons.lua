@@ -2,6 +2,8 @@
 -- 0: no debug, 1: minimal, 2: all
 local debug = 0
 
+-- TODO: clean up old commented code.
+
 local _, playerClass = UnitClass("player")
 if playerClass ~= "MAGE" then
 	print("MageButtons disabled, you are not a mage :(")
@@ -605,6 +607,7 @@ function addon:makeButtons(btnType, typeTable)
 	
 	local i
 	for i = 1, #typeTable, 1 do
+		-- TODO: rewrite to skip to next if nil
 		if typeTable[i] ~= nil then
 
 			-- Hide the button if it already exists

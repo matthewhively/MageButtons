@@ -283,6 +283,7 @@ local function onevent(self, event, arg1, ...)
 			--------------------
 			-- Dropdown Boxes --
 			--------------------
+			-- TODO: convert to a helper function so this eval can be purged
 			local obj = [[if not buttonTypes]] .. i .. [[ then
 			   CreateFrame("Button", "buttonTypes]] .. i .. [[", mbPanel, "UIDropDownMenuTemplate")
 			end
@@ -301,6 +302,7 @@ local function onevent(self, event, arg1, ...)
 			
 			-- return dropdown selection and
 			-- dropdown box properties
+			-- TODO: DRY this up with a helper method
 			if i == 1 then
 				local function OnClick(self)
 					UIDropDownMenu_SetSelectedID(buttonTypes1, self:GetID(), text, value)
@@ -391,7 +393,7 @@ local function onevent(self, event, arg1, ...)
 			
 				UIDropDownMenu_Initialize(buttonTypes6, initialize)
 			end
-			
+			-- TODO: convert into a helper function so this eval can be purged
 			local obj2 = [[UIDropDownMenu_SetWidth(buttonTypes]] .. i .. [[, 100);
 			UIDropDownMenu_SetButtonWidth(buttonTypes]] .. i .. [[, 124)
 			UIDropDownMenu_SetSelectedID(buttonTypes]] .. i .. [[, 1)
@@ -582,6 +584,7 @@ local function onevent(self, event, arg1, ...)
 		--------------------------------
 		-- Text boxes for RGBA values --
 		--------------------------------
+		-- TODO: DRY this up with a helper method
 		local redBox = CreateFrame("EditBox", redBox, mbPanel, "InputBoxTemplate")
 		redBox:SetWidth(30)
 		redBox:SetHeight(30)
@@ -625,6 +628,7 @@ local function onevent(self, event, arg1, ...)
 		------------------------------
 		-- Text box for button size --
 		------------------------------
+		-- TODO: DRY this up with a helper method
 		local buttonSize = MageButtons:getSV("buttonSettings", "size") or 26
 		local buttonSizeBox = CreateFrame("EditBox", buttonSizeBox, mbPanel, "InputBoxTemplate")
 		buttonSizeBox:SetWidth(30)
