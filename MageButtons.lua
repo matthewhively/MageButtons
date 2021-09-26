@@ -116,7 +116,7 @@ local function onevent(self, event, arg1, ...)
 	if(event == "ADDON_LOADED" and arg1 == "MageButtons") then	
 
 		-- Needs a slight delay on initial startup, don't know why
-		C_Timer.After(4, function()
+		C_Timer.After(6, function()
 			
 			
 			-- Set up lists of spells
