@@ -12,7 +12,6 @@
 <Include file="Libs\AceEvent-3.0\AceEvent-3.0.xml"/>
 <Include file="libs\AceGUI-3.0\AceGUI-3.0.xml"/>
 <Include file="libs\AceGUI-3.0-SharedMediaWidgets\widget.xml"/>
-<Include file="libs\SetMacroIcon.lua"/>
 <!--@end-no-lib-strip@-->
 </Ui>
 
