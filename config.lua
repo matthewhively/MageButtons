@@ -309,7 +309,7 @@ local function onevent(self, event, arg1, ...)
 				end
 				
 				local function initialize(self, level)
-				for k,v in pairs(buttonTypeTable1) do
+					for k,v in pairs(buttonTypeTable1) do
 						local info = UIDropDownMenu_CreateInfo(); info.text = v; info.value = v; info.func = OnClick; UIDropDownMenu_AddButton(info, level)
 					end
 				end
@@ -324,7 +324,7 @@ local function onevent(self, event, arg1, ...)
 				end
 					
 				local function initialize(self, level)
-				for k,v in pairs(buttonTypeTable2) do
+					for k,v in pairs(buttonTypeTable2) do
 						local info = UIDropDownMenu_CreateInfo(); info.text = v; info.value = v; info.func = OnClick; UIDropDownMenu_AddButton(info, level)
 					end
 				end
@@ -339,7 +339,7 @@ local function onevent(self, event, arg1, ...)
 				end
 				
 				local function initialize(self, level)
-				for k,v in pairs(buttonTypeTable3) do
+					for k,v in pairs(buttonTypeTable3) do
 						local info = UIDropDownMenu_CreateInfo(); info.text = v; info.value = v; info.func = OnClick; UIDropDownMenu_AddButton(info, level)
 					end
 				end
@@ -354,7 +354,7 @@ local function onevent(self, event, arg1, ...)
 				end
 				
 				local function initialize(self, level)
-				for k,v in pairs(buttonTypeTable4) do
+					for k,v in pairs(buttonTypeTable4) do
 						local info = UIDropDownMenu_CreateInfo(); info.text = v; info.value = v; info.func = OnClick; UIDropDownMenu_AddButton(info, level)
 					end
 				end
@@ -369,7 +369,7 @@ local function onevent(self, event, arg1, ...)
 				end
 				
 				local function initialize(self, level)
-				for k,v in pairs(buttonTypeTable5) do
+					for k,v in pairs(buttonTypeTable5) do
 						local info = UIDropDownMenu_CreateInfo(); info.text = v; info.value = v; info.func = OnClick; UIDropDownMenu_AddButton(info, level)
 					end
 				end
@@ -384,7 +384,7 @@ local function onevent(self, event, arg1, ...)
 				end
 				
 				local function initialize(self, level)
-				for k,v in pairs(buttonTypeTable6) do
+					for k,v in pairs(buttonTypeTable6) do
 						local info = UIDropDownMenu_CreateInfo(); info.text = v; info.value = v; info.func = OnClick; UIDropDownMenu_AddButton(info, level)
 					end
 				end
