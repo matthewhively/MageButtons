@@ -49,14 +49,23 @@ SlashCmdList["MAGEBUTTONS"] = function(inArgs)
 
 	local wArgs = strtrim(inArgs)
 	if wArgs == "" then
-		print("usage: /magebuttons lock|move|unlock")
+		print("usage: /magebuttons lock|move|unlock, minimap 0|1, config")
 	elseif wArgs == "minimap 1" or wArgs == "minimap 0" then
 		cmdarg, tog = string.split(" ", wArgs)
 		MageButtons:maptoggle(tog)
 	elseif wArgs == "move" or wArgs == "unlock" then
-		print("NYI")
+		print("move")
+		lockStatus = addon:getSV("framelock", "lock")
+		if lockStatus == 1 then
+			addon:unlockAnchor()
+		else
+			addon:lockAnchor()
+		end
 	elseif wArgs == "lock" then
-		print("NYI")
+		magebuttons:lockAnchor()
+	elseif wArgs == "config" then
+		InterfaceOptionsFrame_OpenToCategory(mbPanel)
+		InterfaceOptionsFrame_OpenToCategory(mbPanel)
 	else
 		print("usage: /MageButtons lock|move|unlock")
 	end
@@ -236,40 +245,22 @@ local function onevent(self, event, arg1, ...)
 					elseif button == "LeftButton" then
 						if lockStatus == 0 then
 							-- Not locked, lock it and save the anchor position
-							MageButtonsConfig:SetMovable(false)
-							MageButtonsConfig:EnableMouse(false)
-							MageButtonsFrame:SetBackdropColor(0, 0, 0, 0)
-
-							local _, _, relativePoint, xPos, yPos = MageButtonsConfig:GetPoint()
-							addon:setAnchorPosition(relativePoint, xPos, yPos)
-							lockStatus = 1
-							lockTbl = {
-								lock = 1,
-							}
-
-							MageButtonsDB["framelock"] = lockTbl
+							addon:lockAnchor()
 						else
 							-- locked, unlock
-							MageButtonsConfig:SetMovable(true)
-							MageButtonsConfig:EnableMouse(true)
-							MageButtonsFrame:SetBackdropColor(0, .7, 1, 1)
-							lockStatus = 0
-							lockTbl = {
-								lock = 0,
-							}
-
-							MageButtonsDB["framelock"] = lockTbl
+							addon:unlockAnchor()
 						end
 					end
 				end,
 				
 				-- Minimap Icon tooltip
 				OnTooltipShow = function(tooltip)
-					tooltip:AddLine("|cffffffffMageButtons|r\nLeft-click to lock/unlock.\nRight-click to hide minimap button.")
+					tooltip:AddLine("|cffffffffMageButtons|r\nLeft-click to lock/unlock.\nRight-click to configure.\nShift+Right-click to hide minimap button.")
 				end,
 			})
 			
 			-- display the minimap icon?
+			local mmap = addon:getSV("minimap", "icon")
 			if mmap == 1 then
 				MageButtonsMinimapIcon:Register("mageButtonsIcon", MageButtonsMinimapData, MageButtonsDB)
 				addon:maptoggle(1)
@@ -292,7 +283,7 @@ function addon:maptoggle(mtoggle)
 	
 	MageButtonsDB["minimap"] = mmTbl
 	
-	if mtoggle == "0" then
+	if mtoggle == "0" or mtoggle == 0 then
 		if ( debug >= 1 ) then print("hiding icon") end
 		MageButtonsMinimapIcon:Hide("mageButtonsIcon")
 	else
@@ -305,11 +296,40 @@ function addon:maptoggle(mtoggle)
 	end
 end
 
+------------------------
+-- Lock/Unlock anchor --
+------------------------
+function addon:lockAnchor()
+	MageButtonsConfig:SetMovable(false)
+	MageButtonsConfig:EnableMouse(false)
+	MageButtonsFrame:SetBackdropColor(0, 0, 0, 0)
+
+	local _, _, relativePoint, xPos, yPos = MageButtonsConfig:GetPoint()
+	addon:setAnchorPosition(relativePoint, xPos, yPos)
+	lockStatus = 1
+	lockTbl = {
+		lock = 1,
+	}
+
+	MageButtonsDB["framelock"] = lockTbl
+end
+
+function addon:unlockAnchor()
+MageButtonsConfig:SetMovable(true)
+	MageButtonsConfig:EnableMouse(true)
+	MageButtonsFrame:SetBackdropColor(0, .7, 1, 1)
+	lockStatus = 0
+	lockTbl = {
+		lock = 0,
+	}
+
+	MageButtonsDB["framelock"] = lockTbl
+end
+
 ------------------------------
 -- Retrieve anchor position --
 ------------------------------
 function addon:getAnchorPosition()
-
 	local posTbl = MageButtonsDB["position"]
 	if posTbl == nil then
 		return "CENTER", 200, -200

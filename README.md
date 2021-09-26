@@ -25,10 +25,12 @@ At any time, if the owner wishes to take over this repository it will be transfe
 
 ## Known issues / TODO:
 - Keybindings are wonky, probably because I'm doing something wrong, but they mostly work?
+-- 0.99 release appears to require a reload after setting keybinds
 - Not sure if the Polymorph button is worth it, was thinking it would be nice to easily switch from Sheep to Turtle to Pig
 - Could add AI for easy access to lower ranks for lower level players
 - Lock/unlock from options panel is out of sync with minimap click
 
 ## Revision History
+2019-08-11 - 0.99a - Minimap button should now stay hidden
 2019-07-28 - 0.99 - Largely rewritten, most settings changes should now occur without needing to reload
 2019-06-23 - 0.90 - Initial Classic WoW Beta release
