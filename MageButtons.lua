@@ -80,9 +80,9 @@ end
 SLASH_MAGEBUTTONS1 = "/magebuttons"
 
 -- Set some default values
-xOffset = 0
-yOffset = 0
-totalHeight, totalWidth, backdropPadding = 0, 0, 5
+local xOffset = 0
+local yOffset = 0
+local totalHeight, totalWidth, backdropPadding = 0, 0, 5
 --backdropAnchor = "TOP"
 --backdropParentAnchor = "BOTTOM"
 --local backdropOffset = 0
@@ -93,7 +93,7 @@ local growthDir, menuDir, btnSize, padding, border, backdropPadding, backdropRed
 ------------------
 --- Main frame ---
 ------------------
-MageButtonsConfig = CreateFrame("Frame", "MageButtonsFrame", UIParent, "BackdropTemplate")
+local MageButtonsConfig = CreateFrame("Frame", "MageButtonsFrame", UIParent, "BackdropTemplate")
 MageButtonsConfig:SetMovable(false)
 MageButtonsConfig:EnableMouse(false)
 MageButtonsConfig:RegisterForDrag("LeftButton")
@@ -127,14 +127,17 @@ local function make_spell_table(spell_id_list)
 		end
 	end
 
-  return tbl
+	return tbl
 end
 
 local function preload_spell_data(spell_id_list)
 	for k = 1, #spell_id_list, 1 do
 		C_Spell.RequestLoadSpellData(spell_id_list[k])
-		end
+	end
 end
+
+-- I think these need to be in the Top Addon Scope
+local WaterTable, FoodTable, TeleportsTable, PortalsTable, GemsTable, PolymorphTable
 
 --------------
 --- Events ---
@@ -144,13 +147,13 @@ local function onevent(self, event, addonName, ...)
 		return
 	end
 	--print(event)
-
+		
 	-- Set up lists of spells
 	-- Bottom <--> Top
-	WaterSpells = {5504, 5505, 5506, 6127, 10138, 10139, 10140, 37420, 43987, 27090}
-	FoodSpells  = {587, 597, 990, 6129, 10144, 10145, 28612, 33717}
-	TeleportSpells = {}
-	PortalSpells   = {}
+	local WaterSpells = {5504, 5505, 5506, 6127, 10138, 10139, 10140, 37420, 43987, 27090}
+	local FoodSpells  = {587, 597, 990, 6129, 10144, 10145, 28612, 33717}
+	local TeleportSpells
+	local PortalSpells
 
 	if UnitFactionGroup("player") == "Alliance" then
 		-- Darnassus (3565), Exodar (32271), Theramore (49359), Ironforge (3562), Stormwind (3561), Shattrath (33690)
@@ -163,9 +166,9 @@ local function onevent(self, event, addonName, ...)
 		-- Silvermoon (32267), Undercity (11418), Thunder Bluff (11420), Stonard (49361), Orgrimmar (11417), Shattrath (35717)
 		PortalSpells   = {32267, 11418, 11420, 49361, 11417, 35717} -- {11420, 11418, 11417, 32267, 49361, 35717}
 	end
-	GemSpells = {759, 3552, 10053, 10054, 27101}
+	local GemSpells = {759, 3552, 10053, 10054, 27101}
 	-- pig, turtle, ???
-	PolymorphSpells = {28272, 28271, 28270}  -- REM: insert basic sheep a little later
+	local PolymorphSpells = {28272, 28271, 28270}  -- REM: insert basic sheep a little later
 
 	-- Immediately load spell data (for rank info) so it'll be available a little later to create the addon buttons
 	preload_spell_data(WaterSpells)
@@ -190,13 +193,14 @@ local function onevent(self, event, addonName, ...)
 		table.insert(PolymorphSpells, 1, sheep)
 
 		-- Create the various spell tables using helper function
+		-- REM: declared above this function
 		WaterTable     = make_spell_table(WaterSpells)
 		FoodTable      = make_spell_table(FoodSpells)
 		TeleportsTable = make_spell_table(TeleportSpells)
 		PortalsTable   = make_spell_table(PortalSpells)
 		GemsTable      = make_spell_table(GemSpells)
 		PolymorphTable = make_spell_table(PolymorphSpells)
-
+			
 		-- Get saved frame location
 		local relPoint, anchorX, anchorY = addon:getAnchorPosition()
 		MageButtonsConfig:ClearAllPoints()
@@ -222,6 +226,7 @@ local function onevent(self, event, addonName, ...)
 						MageButtons:maptoggle("0")
 						print("MageButtons: Hiding icon, re-enable with: /MageButtons minimap 1")
 					else
+						-- TODO: ??? why 3x ???
 						InterfaceOptionsFrame_OpenToCategory(mbPanel)
 						InterfaceOptionsFrame_OpenToCategory(mbPanel)
 						InterfaceOptionsFrame_OpenToCategory(mbPanel)
@@ -237,13 +242,13 @@ local function onevent(self, event, addonName, ...)
 					end
 				end
 			end,
-
+			
 			-- Minimap Icon tooltip
 			OnTooltipShow = function(tooltip)
 				tooltip:AddLine("|cffffffffMageButtons|r\nLeft-click to lock/unlock.\nRight-click to configure.\nShift+Right-click to hide minimap button.")
 			end,
 		})
-
+		
 		-- display the minimap icon?
 		local mmap = addon:getSV("minimap", "icon") or 1
 		if mmap == 1 then
@@ -292,7 +297,7 @@ function addon:lockAnchor()
 	local _, _, relativePoint, xPos, yPos = MageButtonsConfig:GetPoint()
 	addon:setAnchorPosition(relativePoint, xPos, yPos)
 	lockStatus = 1
-	lockTbl = {
+	local lockTbl = {
 		lock = 1,
 	}
 
@@ -304,7 +309,7 @@ MageButtonsConfig:SetMovable(true)
 	MageButtonsConfig:EnableMouse(true)
 	MageButtonsFrame:SetBackdropColor(0, .7, 1, 1)
 	lockStatus = 0
-	lockTbl = {
+	local lockTbl = {
 		lock = 0,
 	}
 
@@ -321,9 +326,9 @@ function addon:getAnchorPosition()
 		return "CENTER", 200, -200
 	else
 		-- Table exists, get the value if it is defined
-		relativePoint = posTbl["relativePoint"] or "CENTER"
-		xPos = posTbl["xPos"] or 200
-		yPos = posTbl["yPos"] or -200
+		local relativePoint = posTbl["relativePoint"] or "CENTER"
+		local xPos = posTbl["xPos"] or 200
+		local yPos = posTbl["yPos"] or -200
 		if ( debug > 0 ) then print("got position: " .. relativePoint .. " " .. xPos .. " " .. yPos) end
 		return relativePoint, xPos, yPos
 	end
@@ -333,7 +338,7 @@ end
 -- Save anchor position --
 --------------------------
 function addon:setAnchorPosition(relativePoint, xPos, yPos)
-	posTbl = {
+	local posTbl = {
 		relativePoint = relativePoint,
 		xPos = xPos,
 		yPos = yPos,
@@ -367,6 +372,7 @@ function addon:makeBaseButtons()
 	WaterMenu, FoodMenu, TeleportsMenu, PortalsMenu, GemsMenu, PolymorphMenu = 0, 0, 0, 0, 0, 0
 	
 	-- Pull items from Saved Variables
+	-- REM: declared at the top of this file
 	growthDir = addon:getSV("growth", "direction") or "Horizontal"
 	menuDir = addon:getSV("growth", "buttons") or "Up"
 	btnSize = addon:getSV("buttonSettings", "size") or 26
@@ -377,7 +383,7 @@ function addon:makeBaseButtons()
 	backdropGreen = addon:getSV("bgcolor", "green") or .1
 	backdropBlue = addon:getSV("bgcolor", "blue") or .1
 	backdropAlpha = addon:getSV("bgcolor", "alpha") or 1
-	mouseover = MageButtons:getSV("mouseover", "mouseover") or 0
+	mouseover = addon:getSV("mouseover", "mouseover") or 0
 
 	local keybindTable = {"MAGEBUTTONS_BUTTON1", "MAGEBUTTONS_BUTTON2", "MAGEBUTTONS_BUTTON3", "MAGEBUTTONS_BUTTON4", "MAGEBUTTONS_BUTTON5", "MAGEBUTTONS_BUTTON6"}
 	
@@ -413,6 +419,7 @@ function addon:makeBaseButtons()
 			end
 			
 			-- default menu status to 0 (closed)
+			-- REM: declared at the top of this file
 			menuStatus[j] = 0
 			
 			-- Set the click properties of the button
@@ -445,7 +452,7 @@ function addon:makeBaseButtons()
 				baseButton.t:SetTexCoord(0.06,0.94,0.06,0.94)
 			end
 			baseButton.t:SetAllPoints()
-
+			
 			-- Tooltip
 			baseButton:SetScript("OnEnter",function(self,motion)
 				GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
@@ -511,6 +518,7 @@ function addon:makeBaseButtons()
 			
 
 			-- Determine the growth criteria based on user settings
+			-- REM: all of these variables are declared earlier
 			if growthDir == "Vertical" then
 				yOffset = yOffset - (btnSize + padding)
 				totalHeight = -(yOffset - backdropPadding)
@@ -769,7 +777,7 @@ function addon:getTooltipNumber(spellName)
 		elseif (spell == spellName) then
 			return slot
 		end
-		slot = slot + 1
+	   slot = slot + 1
 	end
 end
 

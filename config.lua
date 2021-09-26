@@ -12,7 +12,7 @@ local directionTbl = {}
 
 
 -- Main options panel
-mbPanel = CreateFrame("Frame")
+mbPanel = CreateFrame("Frame") -- I guess this needs to be global?
 mbPanel.name = addonName
 InterfaceOptions_AddCategory(mbPanel)
 
@@ -64,6 +64,7 @@ mbBorderCheck:SetPoint("TOPLEFT", mbPanel, "TOPLEFT", 20, -40)
 -- Store checkbox state in SavedVariables
 mbBorderCheck:SetScript("OnClick", 
 	function()
+        local borderTbl
 		if (mbBorderCheck:GetChecked()) then 
 			if ( debug >= 1 ) then print("Checked!") end
 			borderTbl = {
@@ -106,6 +107,7 @@ mbMapCheck:SetPoint("TOPLEFT", mbPanel, "TOPLEFT", 20, -60)
 -- Store checkbox state in SavedVariables
 mbMapCheck:SetScript("OnClick", 
 	function()
+        local mapTbl
 		if (mbMapCheck:GetChecked()) then 
 			if ( debug >= 1 ) then print("Checked!") end
 			mapTbl = {
@@ -153,6 +155,7 @@ mbLockCheck:SetPoint("LEFT", mbBorderCheck, "RIGHT", 150, 0)
 -- Store checkbox state in SavedVariables
 mbLockCheck:SetScript("OnClick", 
 	function()
+        local lockTbl
 		if (mbLockCheck:GetChecked()) then 
 			if ( debug >= 1 ) then print("Checked!") end
 			lockTbl = {
@@ -164,7 +167,7 @@ mbLockCheck:SetScript("OnClick",
 			MageButtonsConfig:SetMovable(false)
 			MageButtonsConfig:EnableMouse(false)
 			MageButtonsFrame:SetBackdropColor(0, 0, 0, 0)
-			lockStatus = 1
+			local lockStatus = 1
 		else 
 			if ( debug >= 1 ) then print("Unchecked :(") end
 			lockTbl = {
@@ -176,7 +179,7 @@ mbLockCheck:SetScript("OnClick",
 			MageButtonsConfig:SetMovable(true)
 			MageButtonsConfig:EnableMouse(true)
 			MageButtonsFrame:SetBackdropColor(0, .7, 1, 1)
-			lockStatus = 0
+			local lockStatus = 0
 		end
 		
 	end
@@ -206,6 +209,7 @@ mbMouseoverCheck:SetPoint("LEFT", mbMapCheck, "RIGHT", 150, 0)
 -- Store checkbox state in SavedVariables
 mbMouseoverCheck:SetScript("OnClick", 
 	function()
+        local moTbl
 		if (mbMouseoverCheck:GetChecked()) then 
 			if ( debug >= 1 ) then print("Checked!") end
 			moTbl = {
@@ -243,6 +247,7 @@ local function onevent(self, event, arg1, ...)
 		local i = 1
 		local yoffset = -30
 
+        -- REM: declared at top of this file
 		btnTbl["a"] = MageButtons:getSV("buttons", "a")
 		btnTbl["b"] = MageButtons:getSV("buttons", "b")
 		btnTbl["c"] = MageButtons:getSV("buttons", "c")
@@ -251,8 +256,10 @@ local function onevent(self, event, arg1, ...)
 		btnTbl["f"] = MageButtons:getSV("buttons", "f")
 		
 		for i = 1, 6, 1 do
-			buttonKey = buttonNames[i]
-			defaultValue = "set me!"
+			local buttonKey = buttonNames[i]
+			local defaultValue = "set me!"
+            local btype1, btype2, btype3, btype4, btype5, btype6
+            local buttonTypeTable1, buttonTypeTable2, buttonTypeTable3, buttonTypeTable4, buttonTypeTable5, buttonTypeTable6
 			if i == 1 then
 				btype1 = MageButtons:getSV("buttons", "a") or defaultValue
 				buttonTypeTable1 = { btype1, "Water", "Food", "Teleports", "Portals", "Gems", "Polymorph", "none"}
@@ -303,7 +310,7 @@ local function onevent(self, event, arg1, ...)
 				
 				local function initialize(self, level)
 				for k,v in pairs(buttonTypeTable1) do
-						info = UIDropDownMenu_CreateInfo(); info.text = v; info.value = v; info.func = OnClick; UIDropDownMenu_AddButton(info, level)
+						local info = UIDropDownMenu_CreateInfo(); info.text = v; info.value = v; info.func = OnClick; UIDropDownMenu_AddButton(info, level)
 					end
 				end
 			
@@ -318,7 +325,7 @@ local function onevent(self, event, arg1, ...)
 					
 				local function initialize(self, level)
 				for k,v in pairs(buttonTypeTable2) do
-						info = UIDropDownMenu_CreateInfo(); info.text = v; info.value = v; info.func = OnClick; UIDropDownMenu_AddButton(info, level)
+						local info = UIDropDownMenu_CreateInfo(); info.text = v; info.value = v; info.func = OnClick; UIDropDownMenu_AddButton(info, level)
 					end
 				end
 			
@@ -333,7 +340,7 @@ local function onevent(self, event, arg1, ...)
 				
 				local function initialize(self, level)
 				for k,v in pairs(buttonTypeTable3) do
-						info = UIDropDownMenu_CreateInfo(); info.text = v; info.value = v; info.func = OnClick; UIDropDownMenu_AddButton(info, level)
+						local info = UIDropDownMenu_CreateInfo(); info.text = v; info.value = v; info.func = OnClick; UIDropDownMenu_AddButton(info, level)
 					end
 				end
 			
@@ -348,7 +355,7 @@ local function onevent(self, event, arg1, ...)
 				
 				local function initialize(self, level)
 				for k,v in pairs(buttonTypeTable4) do
-						info = UIDropDownMenu_CreateInfo(); info.text = v; info.value = v; info.func = OnClick; UIDropDownMenu_AddButton(info, level)
+						local info = UIDropDownMenu_CreateInfo(); info.text = v; info.value = v; info.func = OnClick; UIDropDownMenu_AddButton(info, level)
 					end
 				end
 			
@@ -363,7 +370,7 @@ local function onevent(self, event, arg1, ...)
 				
 				local function initialize(self, level)
 				for k,v in pairs(buttonTypeTable5) do
-						info = UIDropDownMenu_CreateInfo(); info.text = v; info.value = v; info.func = OnClick; UIDropDownMenu_AddButton(info, level)
+						local info = UIDropDownMenu_CreateInfo(); info.text = v; info.value = v; info.func = OnClick; UIDropDownMenu_AddButton(info, level)
 					end
 				end
 			
@@ -378,7 +385,7 @@ local function onevent(self, event, arg1, ...)
 				
 				local function initialize(self, level)
 				for k,v in pairs(buttonTypeTable6) do
-						info = UIDropDownMenu_CreateInfo(); info.text = v; info.value = v; info.func = OnClick; UIDropDownMenu_AddButton(info, level)
+						local info = UIDropDownMenu_CreateInfo(); info.text = v; info.value = v; info.func = OnClick; UIDropDownMenu_AddButton(info, level)
 					end
 				end
 			
@@ -424,7 +431,7 @@ local function onevent(self, event, arg1, ...)
 		-- return dropdown selection
 		local function OnClick(self)
 			UIDropDownMenu_SetSelectedID(growthDirectionBox, self:GetID(), text, value)
-			growthDirection = self.value
+			local growthDirection = self.value
 			if ( debug == 2 ) then print(growthDirection) end
 			directionTbl["direction"] = growthDirection
 			return growthDirection
@@ -432,7 +439,7 @@ local function onevent(self, event, arg1, ...)
 		
 		-- dropdown box properties
 		local function initialize(self, level)
-			local info = UIDropDownMenu_CreateInfo()
+			local info -- = UIDropDownMenu_CreateInfo()
 			for k,v in pairs(directions) do
 				info = UIDropDownMenu_CreateInfo()
 				info.text = v
@@ -482,7 +489,7 @@ local function onevent(self, event, arg1, ...)
 		-- return dropdown selection
 		local function OnClick(self)
 			UIDropDownMenu_SetSelectedID(buttonDirectionBox, self:GetID(), text, value)
-			buttonDirection = self.value
+			local buttonDirection = self.value
 			if ( debug == 2 ) then print(buttonDirection) end
 			directionTbl["buttons"] = buttonDirection
 			return buttonDirection
@@ -575,7 +582,7 @@ local function onevent(self, event, arg1, ...)
 		--------------------------------
 		-- Text boxes for RGBA values --
 		--------------------------------
-		redBox = CreateFrame("EditBox", redBox, mbPanel, "InputBoxTemplate")
+		local redBox = CreateFrame("EditBox", redBox, mbPanel, "InputBoxTemplate")
 		redBox:SetWidth(30)
 		redBox:SetHeight(30)
 		redBox:SetPoint("LEFT", colorbox, "RIGHT", 20, 0)
@@ -585,7 +592,7 @@ local function onevent(self, event, arg1, ...)
 		redBox:SetAutoFocus(false)
 		redBox:SetCursorPosition(0)
 		
-		greenBox = CreateFrame("EditBox", greenBox, mbPanel, "InputBoxTemplate")
+		local greenBox = CreateFrame("EditBox", greenBox, mbPanel, "InputBoxTemplate")
 		greenBox:SetWidth(30)
 		greenBox:SetHeight(30)
 		greenBox:SetPoint("LEFT", redBox, "RIGHT", 10, 0)
@@ -595,7 +602,7 @@ local function onevent(self, event, arg1, ...)
 		greenBox:SetAutoFocus(false)
 		greenBox:SetCursorPosition(0)
 		
-		blueBox = CreateFrame("EditBox", blueBox, mbPanel, "InputBoxTemplate")
+		local blueBox = CreateFrame("EditBox", blueBox, mbPanel, "InputBoxTemplate")
 		blueBox:SetWidth(30)
 		blueBox:SetHeight(30)
 		blueBox:SetPoint("LEFT", greenBox, "RIGHT", 10, 0)
@@ -605,7 +612,7 @@ local function onevent(self, event, arg1, ...)
 		blueBox:SetAutoFocus(false)
 		blueBox:SetCursorPosition(0)
 		
-		alphaBox = CreateFrame("EditBox", alphaBox, mbPanel, "InputBoxTemplate")
+		local alphaBox = CreateFrame("EditBox", alphaBox, mbPanel, "InputBoxTemplate")
 		alphaBox:SetWidth(30)
 		alphaBox:SetHeight(30)
 		alphaBox:SetPoint("LEFT", blueBox, "RIGHT", 10, 0)
@@ -619,7 +626,7 @@ local function onevent(self, event, arg1, ...)
 		-- Text box for button size --
 		------------------------------
 		local buttonSize = MageButtons:getSV("buttonSettings", "size") or 26
-		buttonSizeBox = CreateFrame("EditBox", buttonSizeBox, mbPanel, "InputBoxTemplate")
+		local buttonSizeBox = CreateFrame("EditBox", buttonSizeBox, mbPanel, "InputBoxTemplate")
 		buttonSizeBox:SetWidth(30)
 		buttonSizeBox:SetHeight(30)
 		buttonSizeBox:SetPoint("TOPLEFT", colorbox, "BOTTOMLEFT", 0, -40)
@@ -637,7 +644,7 @@ local function onevent(self, event, arg1, ...)
 		-- Text box for button padding --
 		---------------------------------
 		local paddingSize = MageButtons:getSV("buttonSettings", "padding") or 5
-		buttonPaddingBox = CreateFrame("EditBox", buttonPaddingBox, mbPanel, "InputBoxTemplate")
+		local buttonPaddingBox = CreateFrame("EditBox", buttonPaddingBox, mbPanel, "InputBoxTemplate")
 		buttonPaddingBox:SetWidth(30)
 		buttonPaddingBox:SetHeight(30)
 		buttonPaddingBox:SetPoint("TOPLEFT", colorbox, "BOTTOMLEFT", 0, -100)
@@ -655,7 +662,7 @@ local function onevent(self, event, arg1, ...)
 		-- Text box for background padding --
 		-------------------------------------
 		local bgPaddingSize = MageButtons:getSV("buttonSettings", "bgpadding") or 2.5
-		bgPaddingBox = CreateFrame("EditBox", bgPaddingBox, mbPanel, "InputBoxTemplate")
+		local bgPaddingBox = CreateFrame("EditBox", bgPaddingBox, mbPanel, "InputBoxTemplate")
 		bgPaddingBox:SetWidth(30)
 		bgPaddingBox:SetHeight(30)
 		bgPaddingBox:SetPoint("TOPLEFT", colorbox, "BOTTOMLEFT", 0, -160)
