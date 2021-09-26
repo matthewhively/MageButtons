@@ -550,7 +550,7 @@ local function onevent(self, event, arg1, ...)
 		local blueValue = MageButtons:getSV("bgcolor", "blue") or .1
 		local alphaValue = MageButtons:getSV("bgcolor", "alpha") or 1
 		
-		local colorbox = CreateFrame("Button", colorbox, mbPanel)
+		local colorbox = CreateFrame("Button", colorbox, mbPanel, "BackdropTemplate")
 		colorbox:SetWidth(24)
 		colorbox:SetHeight(24)
 		colorbox:SetPoint("LEFT", usageText, "RIGHT", 80, -20)

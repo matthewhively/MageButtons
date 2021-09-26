@@ -1,4 +1,4 @@
-## Interface: 11302
+## Interface: 20501
 ## Author: pjp (Pixel-Draka (US) / Moxie-Herod (US))
 ## Version: 1.01
 ## Title: MageButtons

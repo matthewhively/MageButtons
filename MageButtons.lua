@@ -86,7 +86,7 @@ local growthDir, menuDir, btnSize, padding, border, backdropPadding, backdropRed
 ------------------
 --- Main frame ---
 ------------------
-MageButtonsConfig = CreateFrame("Frame", "MageButtonsFrame", UIParent)
+MageButtonsConfig = CreateFrame("Frame", "MageButtonsFrame", UIParent, "BackdropTemplate")
 MageButtonsConfig:SetMovable(false)
 MageButtonsConfig:EnableMouse(false)
 MageButtonsConfig:RegisterForDrag("LeftButton")
@@ -116,22 +116,22 @@ local function onevent(self, event, arg1, ...)
 	if(event == "ADDON_LOADED" and arg1 == "MageButtons") then	
 
 		-- Needs a slight delay on initial startup, don't know why
-		C_Timer.After(1, function()
+		C_Timer.After(4, function()
 			
 			
 			-- Set up lists of spells
-			WaterSpells = {5504, 5505, 5506, 6127, 10138, 10139, 10140}
-			FoodSpells = {587, 597, 990, 6129, 10144, 10145, 28612}
+			WaterSpells = {5504, 5505, 5506, 6127, 10138, 10139, 10140, 37420, 43987, 27090}
+			FoodSpells = {587, 597, 990, 6129, 10144, 10145, 28612, 33717}
 			TelportsSpells = {}
 			PortalsSpells = {}
 			if UnitFactionGroup("player") == "Alliance" then
-				TeleportsSpells = {3565, 3561, 3562}
-				PortalsSpells = {11419, 10059, 11416}
+				TeleportsSpells = {3565, 3561, 3562, 32271, 49359, 33690}
+				PortalsSpells = {11419, 10059, 11416, 32266, 49360, 33691}
 			else
-				TeleportsSpells = {3566, 3563, 3567}
-				PortalsSpells = {11420, 11418, 11417}
+				TeleportsSpells = {3566, 3563, 3567, 32272, 49358, 35715}
+				PortalsSpells = {11420, 11418, 11417, 32267, 49361, 35717}
 			end
-			GemsSpells = {759, 3552, 10053, 10054}
+			GemsSpells = {759, 3552, 10053, 10054, 27101}
 			
 			if IsSpellKnown(12826) then sheep = 12826
 			elseif IsSpellKnown(12825) then sheep = 12825
@@ -164,37 +164,7 @@ local function onevent(self, event, arg1, ...)
 				--   get number of spells
 				--   create table of that type with spells that are known (trained)
 				if btnType ~= nil and btnType ~= "none" then
-					-- local obj2 = btnType .. [[Table = {}
-					-- for i = 1, #]] .. btnType .. [[Spells, 1 do
-						-- if IsSpellKnown(]] .. btnType .. [[Spells[i]) then
-							-- local ]] .. btnType .. [[Name = GetSpellInfo(]] .. btnType .. [[Spells[i]) .. "(" .. GetSpellSubtext(]] .. btnType .. [[Spells[i]) .. ")"
-							-- --]] .. btnType .. [[Table[i] = ]] .. btnType .. [[Name
-							-- table.insert(]] .. btnType .. [[Table, ]] .. btnType .. [[Name)
-						-- end
-					-- end	]]
-					
-					-- -- execute the above command
-					-- local cmdRun2 = assert(loadstring(obj2))
-					-- cmdRun2()
-					
-					--print(spellTables["Water"])
-					-- print(btnType)
-					-- tbl = spellTables[btnType]
-					-- local names = {}
-					
-					-- for i = 1, #tbl, 1 do
-						-- print(tbl[i])
-						-- if IsSpellKnown(tbl[i]) then
-							-- local buttonName = GetSpellInfo(tbl[i]) .. "(" .. GetSpellSubtext(tbl[i]) .. ")"
-							-- print(buttonName)
-							-- --table.insert(]] .. btnType .. [[Table, ]] .. btnType .. [[Name)
-							-- tblName = btnType .. "Table"
-							-- table.insert(names, buttonName)
-						-- end
-					-- end
-					
-					-- spellNames[btnType] = names
-					
+
 					local obj2 = btnType .. [[Table = {}
 					for i = 1, #]] .. btnType .. [[Spells, 1 do
 						if IsSpellKnown(]] .. btnType .. [[Spells[i]) then
@@ -492,7 +462,7 @@ function addon:makeBaseButtons()
 			end
 			
 			-- Create new backdrop
-			local baseButtonBackdrop = CreateFrame("Frame", "baseButtonBackdropFrame" .. j, UIParent)
+			local baseButtonBackdrop = CreateFrame("Frame", "baseButtonBackdropFrame" .. j, UIParent, "BackdropTemplate")
 			baseButtonBackdrop:ClearAllPoints()
 			baseButtonBackdrop:SetPoint("CENTER", baseButtons[btnType], "CENTER", 0, 0)
 			baseButtonBackdrop:SetSize(btnSize + backdropPadding * 2, btnSize + backdropPadding * 2)
@@ -607,7 +577,6 @@ function addon:makeButtons(btnType, typeTable)
 		print("MageButtons: Invalid growth direction")
 	end
 	
-
 	local i
 	for i = 1, #typeTable, 1 do
 		if typeTable[i] ~= nil then
@@ -696,7 +665,7 @@ function addon:makeButtons(btnType, typeTable)
 			
 
 			-- Create button background
-			local buttonBackdrop = CreateFrame("Frame", btnType .. "buttonBackdropFrame" .. i, UIParent)
+			local buttonBackdrop = CreateFrame("Frame", btnType .. "buttonBackdropFrame" .. i, UIParent, "BackdropTemplate")
 			buttonBackdrop:SetPoint("CENTER", buttonStore[btnType .. i], "CENTER", 0, 0)
 			buttonBackdrop:SetSize(btnSize + backdropPadding * 2, btnSize + backdropPadding * 2)
 
@@ -717,12 +686,33 @@ function addon:makeButtons(btnType, typeTable)
 					addon:hideButtons(btnType, spellCount)
 				end)
 			end
-			
-			
+						
 			backdropStore[btnType .. i] = buttonBackdrop
 		
 			backdropStore[btnType .. i]:Hide()
 			buttonStore[btnType .. i]:Hide()
+			
+			-- Add level requirement
+			-- local level = 0
+			-- if showLevels then
+				-- local spellLevels = {
+					-- 5504 = 1,
+					-- 5505 = 5,
+					-- 5506 = 15,
+					-- 6127 = 25,
+					-- 10138 = 35,
+					-- 10139 = 45,
+					-- 10140 = 55,
+					-- 587 = 1,
+					-- 597 = 5,
+					-- 990 = 15,
+					-- 6129 = 25,
+					-- 10144 = 35,
+					-- 10145 = 45,
+					-- 28612 = 55,
+				-- }
+				-- level = spellLevels[typeTable[i]]
+			-- end
 			
 			yOffset = yOffset + yOffsetGrowth
 			xOffset = xOffset + xOffsetGrowth

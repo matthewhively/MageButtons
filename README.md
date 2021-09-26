@@ -43,6 +43,7 @@ At any time, if the owner wishes to take over this repository it will be transfe
 - New spells learned from trainers are not automatically added, need to /reload
 
 ## Revision History
+2021-05-13 - 1.02 - Updated with TBC spells
 2019-08-31 - 1.01 - Set menu button strata to HIGH, updated usage
 2019-08-15 - 1.00 - Added mouseover option, minimap icon will now default to on
 2019-08-11 - 0.99a - Minimap button should now stay hidden
