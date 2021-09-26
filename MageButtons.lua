@@ -65,13 +65,14 @@ end
 SLASH_MAGEBUTTONS1 = "/magebuttons"
 
 -- Set some default values
-local xOffset = 0
-local yOffset = 0
-local totalHeight, totalWidth, backdropPadding = 0, 0, 5
-local backdropAnchor = "TOP"
-local backdropParentAnchor = "BOTTOM"
+xOffset = 0
+yOffset = 0
+totalHeight, totalWidth, backdropPadding = 0, 0, 5
+backdropAnchor = "TOP"
+backdropParentAnchor = "BOTTOM"
 --local backdropOffset = 0
 local frameBG = "Interface\\ChatFrame\\ChatFrameBackground"
+local growthDir, menuDir, btnSize, padding, border, backdropPadding, backdropRed, backdropGreen, backdropBlue, backdropAlpha = nil, nil, nil, nil, nil, nil, nil, nil, nil, nil
 
 
 ------------------
@@ -92,6 +93,10 @@ MageButtonsFrame.texture:SetAllPoints(MageButtonsFrame)
 MageButtonsFrame:SetBackdrop({bgFile = [[Interface\ChatFrame\ChatFrameBackground]]})
 MageButtonsFrame:SetBackdropColor(0, 0, 0, 0)
 
+local buttonTypes = { "Water", "Food", "Teleports", "Portals", "Gems", "Polymorph"}
+local btnSize = 0
+
+local spellNames = {}
 
 --------------
 --- Events ---
@@ -104,7 +109,7 @@ local function onevent(self, event, arg1, ...)
 
 		-- Needs a slight delay on initial startup, don't know why
 		C_Timer.After(1, function()
-			local buttonTypes = { "Water", "Food", "Teleports", "Portals", "Gems", "Polymorph"}
+			
 			
 			-- Set up lists of spells
 			WaterSpells = {5504, 5505, 5506, 6127, 10138, 10139, 10140}
@@ -123,8 +128,23 @@ local function onevent(self, event, arg1, ...)
 			if IsSpellKnown(12826) then sheep = 12826
 			elseif IsSpellKnown(12825) then sheep = 12825
 			elseif IsSpellKnown(12824) then sheep = 12824
-			elseif IsSpellKnown(118) then sheep = 118 end
+			elseif IsSpellKnown(118) then sheep = 118
+			else sheep = 9999 end
 			PolymorphSpells = {sheep, 28272, 28271, 28270}
+			
+			
+			local spellTables = {}
+			spellTables["Water"] = {5504, 5505, 5506, 6127, 10138, 10139, 10140}
+			spellTables["Food"] = {587, 597, 990, 6129, 10144, 10145, 28612}
+			if UnitFactionGroup("player") == "Alliance" then
+				spellTables["Teleports"] = {3565, 3561, 3562}
+				spellTables["Portals"] = {11419, 10059, 11416}
+			else
+				spellTables["Teleports"] = {3566, 3563, 3567}
+				spellTables["Portals"] = {11420, 11418, 11417}
+			end
+			spellTables["Gems"] = {759, 3552, 10053, 10054}
+			spellTables["Polymorph"] = {sheep, 28272, 28271, 28270}
 			
 			----------------------------------------
 			-- Create tables from the spell lists --
@@ -136,6 +156,37 @@ local function onevent(self, event, arg1, ...)
 				--   get number of spells
 				--   create table of that type with spells that are known (trained)
 				if btnType ~= nil and btnType ~= "none" then
+					-- local obj2 = btnType .. [[Table = {}
+					-- for i = 1, #]] .. btnType .. [[Spells, 1 do
+						-- if IsSpellKnown(]] .. btnType .. [[Spells[i]) then
+							-- local ]] .. btnType .. [[Name = GetSpellInfo(]] .. btnType .. [[Spells[i]) .. "(" .. GetSpellSubtext(]] .. btnType .. [[Spells[i]) .. ")"
+							-- --]] .. btnType .. [[Table[i] = ]] .. btnType .. [[Name
+							-- table.insert(]] .. btnType .. [[Table, ]] .. btnType .. [[Name)
+						-- end
+					-- end	]]
+					
+					-- -- execute the above command
+					-- local cmdRun2 = assert(loadstring(obj2))
+					-- cmdRun2()
+					
+					--print(spellTables["Water"])
+					-- print(btnType)
+					-- tbl = spellTables[btnType]
+					-- local names = {}
+					
+					-- for i = 1, #tbl, 1 do
+						-- print(tbl[i])
+						-- if IsSpellKnown(tbl[i]) then
+							-- local buttonName = GetSpellInfo(tbl[i]) .. "(" .. GetSpellSubtext(tbl[i]) .. ")"
+							-- print(buttonName)
+							-- --table.insert(]] .. btnType .. [[Table, ]] .. btnType .. [[Name)
+							-- tblName = btnType .. "Table"
+							-- table.insert(names, buttonName)
+						-- end
+					-- end
+					
+					-- spellNames[btnType] = names
+					
 					local obj2 = btnType .. [[Table = {}
 					for i = 1, #]] .. btnType .. [[Spells, 1 do
 						if IsSpellKnown(]] .. btnType .. [[Spells[i]) then
@@ -156,142 +207,14 @@ local function onevent(self, event, arg1, ...)
 			MageButtonsConfig:ClearAllPoints()
 			MageButtonsConfig:SetPoint(relPoint, UIParent, relPoint, anchorX, anchorY)
 			
-			-- Pull items from Saved Variables
-			growthDir = addon:getSV("growth", "direction") or "Horizontal"
-			menuDir = addon:getSV("growth", "buttons") or "Up"
-			btnSize = addon:getSV("buttonSettings", "size") or 26
-			padding = addon:getSV("buttonSettings", "padding") or 5
-			border = addon:getSV("borderStatus", "borderStatus") or 1
-			backdropPadding = addon:getSV("buttonSettings", "bgpadding") or 2.5
-			backdropRed = addon:getSV("bgcolor", "red") or .1
-			backdropGreen = addon:getSV("bgcolor", "green") or .1
-			backdropBlue = addon:getSV("bgcolor", "blue") or .1
-			backdropAlpha = addon:getSV("bgcolor", "alpha") or 1
-
-			------------------
-			-- Base Buttons --
-			------------------
-			local baseSpells = { Water = WaterTable[#WaterTable], Food = FoodTable[#FoodTable], Teleports = TeleportsTable[#TeleportsTable], Portals = PortalsTable[#PortalsTable], Gems = GemsTable[#GemsTable], Polymorph = PolymorphTable[#PolymorphTable]}
-			local spellCounts = {Water = #WaterTable, Food = #FoodTable, Teleports = #TeleportsTable, Portals = #PortalsTable, Gems = #GemsTable, Polymorph = #PolymorphTable}
-			local createButtonMenu = {addon:getSV("buttons", "a") or buttonTypes[1], addon:getSV("buttons", "b") or buttonTypes[2], 
-									  addon:getSV("buttons", "c") or buttonTypes[3], addon:getSV("buttons", "d") or buttonTypes[4], 
-									  addon:getSV("buttons", "e") or buttonTypes[5], addon:getSV("buttons", "f") or buttonTypes[6]}
-
-			-- These store the menu state for each button (0 = closed, 1 = open)
-			WaterMenu, FoodMenu, TeleportsMenu, PortalsMenu, GemsMenu, PolymorphMenu = 0, 0, 0, 0, 0, 0
-
-			local j = 0
-			for j = 1, #createButtonMenu, 1 do
-				--createItem = createButtonMenu[j]
-				local btnType = createButtonMenu[j]
-				local baseSpell = baseSpells[btnType]
-				local spellCount = spellCounts[btnType]
-				--local keybind = "U"
-
-				if baseSpell ~= nil and baseSpell ~= "none" then
-					--keybind = GetBindingKey("MAGEBUTTONS_BUTTON1")
-					--print(keybind)
-				
-					-- The lines below are executed as a single command to create the initial/base buttons
-					--   Create a button (from a spell in the corresponding spell table)
-					--   Set its left click and right click actions
-					--   Set its position, size and icon
-					--   Create a backdrop
-
-					local obj = btnType .. [[Button0 = CreateFrame("Button", "]] .. btnType .. [[Button0", MageButtonsConfig, "SecureActionButtonTemplate");
-					]] .. btnType .. [[Button0:RegisterForClicks("LeftButtonDown", "RightButtonDown")
-					]] .. btnType .. [[Button0:SetAttribute("*type1", "spell");
-					]] .. btnType .. [[Button0:SetAttribute("spell", "]]  .. baseSpell .. [[");
-					--print(GetBindingKey("MAGEBUTTONS_BUTTON]] .. j .. [["))
-					if GetBindingKey("MAGEBUTTONS_BUTTON]] .. j .. [[") ~= nil then
-						--print("bound")
-						keybind = GetBindingKey("MAGEBUTTONS_BUTTON]] .. j .. [[")
-						SetBindingClick(keybind, ]] .. btnType .. [[Button0:GetName());
-					else
-						 
-						--print("not bound")
-					end
-					]] .. btnType .. [[Button0:SetScript("PostClick", function(self, button)
-						if button == "RightButton" then
-							if ]] .. btnType .. [[Menu == 0 then
-								MageButtons:showButtons("]] .. btnType .. [[", ]] .. spellCount .. [[)
-								]] .. btnType .. [[Menu = 1
-							else
-								MageButtons:hideButtons("]] .. btnType .. [[", ]] .. spellCount .. [[)
-								]] .. btnType .. [[Menu = 0
-							end
-						else
-							MageButtons:hideButtons("]] .. btnType .. [[", ]] .. spellCount .. [[)
-							]] .. btnType .. [[Menu = 0
-						end
-					end)
-
-					]] .. btnType .. [[Button0:SetPoint("TOP", MageButtonsFrame, "BOTTOM", ]] .. xOffset .. [[, ]] .. yOffset .. [[)
-					]] .. btnType .. [[Button0:SetSize(]] .. btnSize .. [[, ]] .. btnSize .. [[)
-					]] .. btnType .. [[Button0.t =]]  .. btnType .. [[Button0:CreateTexture(nil, "BACKGROUND")
-					local _, _, buttonTexture = GetSpellInfo("]] .. baseSpell .. [[")
-					]] .. btnType .. [[Button0.t:SetTexture(buttonTexture)
-					
-					if ]] .. border .. [[ == 1 then
-						]] .. btnType .. [[Button0.t:SetTexCoord(0.1,0.9,0.1,0.9)
-					end
-					]] .. btnType .. [[Button0.t:SetAllPoints()
-
-
-					
-					local ]] .. btnType .. [[Button0Backdrop= CreateFrame("Frame", "]] .. btnType .. [[Button0BackdropFrame", UIParent)
-					]] .. btnType .. [[Button0Backdrop:SetPoint("CENTER", ]] .. btnType .. [[Button0, "CENTER", 0, 0)
-					]] .. btnType .. [[Button0Backdrop:SetSize(]] .. btnSize .. [[ + ]] .. backdropPadding .. [[ * 2, ]] .. btnSize .. [[ + ]] .. backdropPadding .. [[ * 2)
-
-					]] .. btnType .. [[Button0BackdropFrame.texture = ]] .. btnType .. [[Button0BackdropFrame:CreateTexture(nil, "BACKGROUND")
-					]] .. btnType .. [[Button0BackdropFrame.texture:SetAllPoints(]] .. btnType .. [[Button0BackdropFrame)
-					]] .. btnType .. [[Button0BackdropFrame:SetBackdrop({bgFile = "Interface\\ChatFrame\\ChatFrameBackground"})
-					]] .. btnType .. [[Button0BackdropFrame:SetBackdropColor(]] .. backdropRed .. [[, ]] .. backdropGreen .. [[, ]] .. backdropBlue .. [[, ]] .. backdropAlpha .. [[)
-					
-					]] .. btnType .. [[Button0:Show()]]
-
-					
-					-- execute the above command
-					local cmdRun = assert(loadstring(obj))
-					cmdRun()
-					
-
-					
-					-- Determine the growth criteria based on user settings
-					if growthDir == "Vertical" then
-						yOffset = yOffset - (btnSize + padding)
-						totalHeight = -(yOffset - backdropPadding)
-						totalWidth = btnSize + backdropPadding + backdropPadding
-						xOffset = 0
-					elseif growthDir == "Horizontal" then
-						yOffset = 0
-						xOffset = xOffset + (btnSize + padding)
-						totalHeight = btnSize + backdropPadding + backdropPadding
-						totalWidth = xOffset + backdropPadding
-						backdropAnchor = "TOPLEFT"
-						backdropParentAnchor = "BOTTOM"
-						--backdropOffset = -(btnSize / 2 + backdropPadding)
-					else
-						print("MageButtons: Invalid growth direction")
-					end
-				end
-				
-			end
 			
 
-			-- Create the menu buttons for each spell type
-			MageButtons:makeButtons("Water", WaterTable)
-			MageButtons:makeButtons("Food", FoodTable)
-			MageButtons:makeButtons("Teleports", TeleportsTable)
-			MageButtons:makeButtons("Portals", PortalsTable)
-			MageButtons:makeButtons("Gems", GemsTable)
-			MageButtons:makeButtons("Polymorph", PolymorphTable)
-			
-			
+			addon:makeBaseButtons()
+
 			-----------------
 			-- Data Broker --
 			-----------------
-			local lockStatus = addon:getSV("framelock", "lock")
+			lockStatus = addon:getSV("framelock", "lock")
 			
 			db = LibStub("AceDB-3.0"):New("MageButtonsDB", SettingsDefaults)
 			MageButtonsDB.db = db;
@@ -320,12 +243,22 @@ local function onevent(self, event, arg1, ...)
 							local _, _, relativePoint, xPos, yPos = MageButtonsConfig:GetPoint()
 							addon:setAnchorPosition(relativePoint, xPos, yPos)
 							lockStatus = 1
+							lockTbl = {
+								lock = 1,
+							}
+
+							MageButtonsDB["framelock"] = lockTbl
 						else
 							-- locked, unlock
 							MageButtonsConfig:SetMovable(true)
 							MageButtonsConfig:EnableMouse(true)
 							MageButtonsFrame:SetBackdropColor(0, .7, 1, 1)
 							lockStatus = 0
+							lockTbl = {
+								lock = 0,
+							}
+
+							MageButtonsDB["framelock"] = lockTbl
 						end
 					end
 				end,
@@ -404,6 +337,183 @@ function addon:setAnchorPosition(relativePoint, xPos, yPos)
 	--MageButtonsConfig:SetPoint("CENTER", xPos, yPos)
 end
 
+local baseButtons = {}
+local baseButtonBackdrops = {}
+local baseButtonBackdropFrames = {}
+local menuStatus = {}
+local teleportButtons, portalButtons, polymorphButtons = {}, {}, {}
+local buttonBackdrops = {}
+local buttonStore = {}
+local backdropStore = {}
+
+------------------
+-- Base Buttons --
+------------------
+function addon:makeBaseButtons()
+	local baseSpells = { Water = WaterTable[#WaterTable], Food = FoodTable[#FoodTable], Teleports = TeleportsTable[#TeleportsTable], Portals = PortalsTable[#PortalsTable], Gems = GemsTable[#GemsTable], Polymorph = PolymorphTable[#PolymorphTable]}
+	local spellCounts = {Water = #WaterTable, Food = #FoodTable, Teleports = #TeleportsTable, Portals = #PortalsTable, Gems = #GemsTable, Polymorph = #PolymorphTable}
+	local createButtonMenu = {addon:getSV("buttons", "a") or buttonTypes[1], addon:getSV("buttons", "b") or buttonTypes[2], 
+							  addon:getSV("buttons", "c") or buttonTypes[3], addon:getSV("buttons", "d") or buttonTypes[4], 
+							  addon:getSV("buttons", "e") or buttonTypes[5], addon:getSV("buttons", "f") or buttonTypes[6]}
+
+	-- These store the menu state for each button (0 = closed, 1 = open)
+	WaterMenu, FoodMenu, TeleportsMenu, PortalsMenu, GemsMenu, PolymorphMenu = 0, 0, 0, 0, 0, 0
+	
+	-- Pull items from Saved Variables
+	growthDir = addon:getSV("growth", "direction") or "Horizontal"
+	menuDir = addon:getSV("growth", "buttons") or "Up"
+	btnSize = addon:getSV("buttonSettings", "size") or 26
+	padding = addon:getSV("buttonSettings", "padding") or 5
+	border = addon:getSV("borderStatus", "borderStatus") or 1
+	backdropPadding = addon:getSV("buttonSettings", "bgpadding") or 2.5
+	backdropRed = addon:getSV("bgcolor", "red") or .1
+	backdropGreen = addon:getSV("bgcolor", "green") or .1
+	backdropBlue = addon:getSV("bgcolor", "blue") or .1
+	backdropAlpha = addon:getSV("bgcolor", "alpha") or 1
+
+	local keybindTable = {"MAGEBUTTONS_BUTTON1", "MAGEBUTTONS_BUTTON2", "MAGEBUTTONS_BUTTON3", "MAGEBUTTONS_BUTTON4", "MAGEBUTTONS_BUTTON5", "MAGEBUTTONS_BUTTON6"}
+	
+	local j = 0
+	for j = 1, #createButtonMenu, 1 do
+		--createItem = createButtonMenu[j]
+		local btnType = createButtonMenu[j]
+		local baseSpell = baseSpells[btnType]
+		local spellCount = spellCounts[btnType]
+		--local keybind = "U"
+
+		if baseSpell ~= nil and baseSpell ~= "none" then
+			--keybind = GetBindingKey("MAGEBUTTONS_BUTTON1")
+			--print(keybind)
+			
+			-- Hide the button if it already exists
+			if baseButtons[btnType] then
+				baseButtons[btnType]:Hide()
+			end
+			
+			-- Create new button
+			local baseButton = CreateFrame("Button", btnType .. "Base", MageButtonsConfig, "SecureActionButtonTemplate");
+			baseButton:RegisterForClicks("LeftButtonDown", "RightButtonDown")
+			baseButton:SetAttribute("*type1", "spell");
+			baseButton:SetAttribute("spell", baseSpell);
+			
+			-- Get keybindings
+			--print(GetBindingKey(keybindTable[j]))
+			if GetBindingKey(keybindTable[j]) ~= nil then
+				--print("bound")
+				keybind = GetBindingKey(keybindTable[j])
+				SetBindingClick(keybind, baseButton:GetName());
+			end
+			
+			-- default menu status to 0 (closed)
+			menuStatus[j] = 0
+			
+			-- Set the click properties of the button
+			-- Left click: cast spell; Right click: open or close menu
+			baseButton:SetScript("PostClick", function(self, button)
+				if button == "RightButton" then
+					if menuStatus[j] == 0 then
+						MageButtons:showButtons(btnType, spellCount)
+						menuStatus[j] = 1
+					else
+						MageButtons:hideButtons(btnType, spellCount)
+						menuStatus[j] = 0
+					end
+				else
+					MageButtons:hideButtons(btnType, spellCount)
+					menuStatus[j] = 0
+				end
+			end)
+			
+
+			-- Button properties
+			baseButton:SetPoint("TOP", MageButtonsFrame, "BOTTOM", xOffset, yOffset)
+			baseButton:SetSize(btnSize, btnSize)
+			baseButton:SetFrameStrata("HIGH")
+			baseButton.t = baseButton:CreateTexture(nil, "BACKGROUND")
+			local _, _, buttonTexture = GetSpellInfo(baseSpell)
+			baseButton.t:SetTexture(buttonTexture)
+			
+			if border == 1 then
+				baseButton.t:SetTexCoord(0.06,0.94,0.06,0.94)
+			end
+			baseButton.t:SetAllPoints()
+			
+			-- Tooltip
+			baseButton:SetScript("OnEnter",function(self,motion)
+				GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+				GameTooltip:ClearAllPoints()
+				GameTooltip:SetPoint("BOTTOMLEFT", baseButton, "TOPRIGHT", 10, 5)
+				GameTooltip:SetSpellBookItem(MageButtons:getTooltipNumber(baseSpell), BOOKTYPE_SPELL)
+				GameTooltip:Show()
+			end)
+			
+			baseButton:SetScript("OnLeave",function(self,motion)
+				GameTooltip:Hide()
+			end)
+			
+			-- Store the button in a table for easy access
+			baseButtons[btnType] = baseButton
+
+
+
+			-- Hide the background if it already exits
+			if baseButtonBackdrops[btnType] then
+				baseButtonBackdrops[btnType]:Hide()
+			end
+			
+			-- Create new backdrop
+			local baseButtonBackdrop = CreateFrame("Frame", "baseButtonBackdropFrame" .. j, UIParent)
+			baseButtonBackdrop:ClearAllPoints()
+			baseButtonBackdrop:SetPoint("CENTER", baseButtons[btnType], "CENTER", 0, 0)
+			baseButtonBackdrop:SetSize(btnSize + backdropPadding * 2, btnSize + backdropPadding * 2)
+			
+			-- Store it in table
+			baseButtonBackdrops[btnType] = baseButtonBackdrop
+
+			baseButtonBackdrops[btnType].texture = baseButtonBackdrops[btnType]:CreateTexture(nil, "BACKGROUND")
+			baseButtonBackdrops[btnType].texture:ClearAllPoints()
+			baseButtonBackdrops[btnType].texture:SetAllPoints(baseButtonBackdrops[btnType])
+			baseButtonBackdrops[btnType]:SetBackdrop({bgFile = "Interface\\ChatFrame\\ChatFrameBackground"})
+			baseButtonBackdrops[btnType]:SetBackdropColor(backdropRed, backdropGreen, backdropBlue, backdropAlpha)
+
+			-- Show the backdrop
+			baseButtons[btnType]:Show()
+			
+
+			-- Determine the growth criteria based on user settings
+			if growthDir == "Vertical" then
+				yOffset = yOffset - (btnSize + padding)
+				totalHeight = -(yOffset - backdropPadding)
+				totalWidth = btnSize + backdropPadding + backdropPadding
+				xOffset = 0
+			elseif growthDir == "Horizontal" then
+				yOffset = 0
+				xOffset = xOffset + (btnSize + padding)
+				totalHeight = btnSize + backdropPadding + backdropPadding
+				totalWidth = xOffset + backdropPadding
+				backdropAnchor = "TOPLEFT"
+				backdropParentAnchor = "BOTTOM"
+				--backdropOffset = -(btnSize / 2 + backdropPadding)
+			else
+				print("MageButtons: Invalid growth direction")
+			end
+		end
+		
+	end
+	
+
+	-- Create the menu buttons for each spell type
+	MageButtons:makeButtons("Water", WaterTable)
+	MageButtons:makeButtons("Food", FoodTable)
+	MageButtons:makeButtons("Teleports", TeleportsTable)
+	MageButtons:makeButtons("Portals", PortalsTable)
+	MageButtons:makeButtons("Gems", GemsTable)
+	MageButtons:makeButtons("Polymorph", PolymorphTable)
+	
+	xOffset = 0
+	yOffset = 0
+end
+
 -----------------------
 -- Make menu buttons --
 -----------------------
@@ -416,95 +526,156 @@ function addon:makeButtons(btnType, typeTable)
 	local parentAnchor = nil
 	local xOffset = 0
 	local yOffset = 0
+	
+	--print(btnSize, menuDir)
 
 	if menuDir == "Down" then
 		--yOffset = yOffset - (btnSize + padding)
 		btnAnchor = "TOP"
 		parentAnchor = "BOTTOM"
 		yOffset = -padding
+		yOffsetGrowth = -(btnSize + padding)
+		xOffsetGrowth = 0
 	elseif menuDir == "Up" then
 		--yOffset = yOffset + (btnSize + padding)
 		btnAnchor = "BOTTOM"
 		parentAnchor = "TOP"
 		yOffset = padding
+		yOffsetGrowth = btnSize + padding
+		xOffsetGrowth = 0
 	elseif menuDir == "Right" then
 		--xOffset = xOffset + (btnSize + padding)
 		btnAnchor = "LEFT"
 		parentAnchor = "RIGHT"
 		xOffset = padding
+		yOffsetGrowth = 0
+		xOffsetGrowth = btnSize + padding
 	elseif menuDir == "Left" then
 		--yOffset = 0
 		--xOffset = xOffset - (btnSize + padding)	
 		btnAnchor = "RIGHT"
 		parentAnchor = "LEFT"
 		xOffset = -padding
+		yOffsetGrowth = 0
+		xOffsetGrowth = -(btnSize + padding)
 	else
 		print("MageButtons: Invalid growth direction")
 	end
 	
+
 	local i
 	for i = 1, #typeTable, 1 do
 		if typeTable[i] ~= nil then
-			-- everything below is one command:
-			--   creates button, positions it next to the previous button, sets its OnClick to make the main button perform the new spell, 
-			--   updates the texture of the main button, hides all but the main button
 
-			local obj = btnType .. [[Button]] .. i .. [[ = CreateFrame("Button", "]] .. btnType .. [[Button]] .. i .. [[", MageButtonsConfig)
-			]] .. btnType .. [[Button]] .. i .. [[:SetPoint("]] .. btnAnchor .. [[", ]] .. btnType .. [[Button]] .. i-1 .. [[, "]] .. parentAnchor .. [[", ]] .. xOffset .. [[, ]] .. yOffset .. [[)
-			]] .. btnType .. [[Button]] .. i .. [[:SetSize(]] .. btnSize .. [[, ]] .. btnSize .. [[)
-			]] .. btnType .. [[Button]] .. i .. [[:SetScript("OnClick", function()
-				MageButtons:hideButtons("]] .. btnType .. [[", ]] .. #typeTable .. [[)
-				]] .. btnType .. [[Button0:SetAttribute("spell", "]] .. typeTable[i] .. [[")
-				local _, _, buttonTexture = GetSpellInfo("]] .. typeTable[i] .. [[")
-				]] .. btnType .. [[Button0.t:SetTexture(buttonTexture)
-				]] .. btnType .. [[Button0.t:SetAllPoints()
+			-- Hide the button if it already exists
+			if buttonStore[btnType .. i] then
+				backdropStore[btnType .. i]:Hide()
+				buttonStore[btnType .. i]:Hide()
+			end
+
+			-- Create new button
+			local button = CreateFrame("Button", "button", MageButtonsConfig)
+			button:ClearAllPoints()
+
+			button:SetPoint(btnAnchor, baseButtons[btnType], parentAnchor, xOffset, yOffset)
+			button:SetSize(btnSize, btnSize)
+			button:SetScript("OnClick", function()
+				MageButtons:hideButtons(btnType, #typeTable)
+				baseButtons[btnType]:SetAttribute("spell", typeTable[i])
+				local _, _, buttonTexture = GetSpellInfo(typeTable[i])
+				baseButtons[btnType].t:ClearAllPoints()
+				baseButtons[btnType].t:SetTexture(nil)
+				baseButtons[btnType].t:SetTexture(buttonTexture)
+				baseButtons[btnType].t:SetAllPoints()
+				
+				baseButtons[btnType]:SetScript("OnEnter",function(self,motion)
+					GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+					GameTooltip:ClearAllPoints()
+					GameTooltip:SetPoint("BOTTOMLEFT", self, "TOPRIGHT", 10, 5)
+					
+					GameTooltip:SetSpellBookItem(MageButtons:getTooltipNumber(typeTable[i]), BOOKTYPE_SPELL)
+					GameTooltip:Show()
+				end)	
 			end)
 			
-			]] .. btnType .. [[Button]] .. i .. [[.t = ]] .. btnType .. [[Button]] .. i .. [[:CreateTexture(nil, "BACKGROUND")
-			local _, _, buttonTexture = GetSpellInfo("]] .. typeTable[i] .. [[")
-			]] .. btnType .. [[Button]] .. i .. [[.t:SetTexture(buttonTexture)
-			if ]] .. border .. [[ == 1 then
-				]] .. btnType .. [[Button]] .. i .. [[.t:SetTexCoord(0.1,0.9,0.1,0.9)
-			end
-			]] .. btnType .. [[Button]] .. i .. [[.t:SetAllPoints()
+			-- Tooltip
+			button:SetScript("OnEnter",function(self,motion)
+				GameTooltip:SetOwner(self, "ANCHOR_CURSOR")
+				GameTooltip:ClearAllPoints()
+				GameTooltip:SetPoint("BOTTOMLEFT", self, "TOPRIGHT", 10, 5)
+				
+				GameTooltip:SetSpellBookItem(MageButtons:getTooltipNumber(typeTable[i]), BOOKTYPE_SPELL)
+				GameTooltip:Show()
+			end)
 			
+			button:SetScript("OnLeave",function(self,motion)
+				GameTooltip:Hide()
+			end)
 			
-			local ]] .. btnType .. [[Button]] .. i .. [[Backdrop= CreateFrame("Frame", "]] .. btnType .. [[Button]] .. i .. [[BackdropFrame", UIParent)
-			]] .. btnType .. [[Button]] .. i .. [[Backdrop:SetPoint("CENTER", ]] .. btnType .. [[Button]] .. i .. [[, "CENTER", 0, 0)
-			]] .. btnType .. [[Button]] .. i .. [[Backdrop:SetSize(]] .. btnSize .. [[ + ]] .. backdropPadding .. [[ * 2, ]] .. btnSize .. [[ + ]] .. padding .. [[ * 1)
+			-- Store the button in a table
+			buttonStore[btnType .. i] = button
 
-			]] .. btnType .. [[Button]] .. i .. [[BackdropFrame.texture = ]] .. btnType .. [[Button]] .. i .. [[BackdropFrame:CreateTexture(nil, "BACKGROUND")
-			]] .. btnType .. [[Button]] .. i .. [[BackdropFrame.texture:SetAllPoints(]] .. btnType .. [[Button]] .. i .. [[BackdropFrame)
-			]] .. btnType .. [[Button]] .. i .. [[BackdropFrame:SetBackdrop({bgFile = "Interface\\ChatFrame\\ChatFrameBackground"})
-			]] .. btnType .. [[Button]] .. i .. [[BackdropFrame:SetBackdropColor(]] .. backdropRed .. [[, ]] .. backdropGreen .. [[, ]] .. backdropBlue .. [[, ]] .. backdropAlpha .. [[)
-		
-			]] .. btnType .. [[Button]] .. i .. [[BackdropFrame:Hide()
-			]] .. btnType .. [[Button]] .. i .. [[:Hide()]]
+			button.t = button:CreateTexture(nil, "BACKGROUND")
+			local _, _, buttonTexture2 = GetSpellInfo(typeTable[i])
+			button.t:SetTexture(buttonTexture2)
+			if border == 1 then
+				button.t:SetTexCoord(0.1,0.9,0.1,0.9)
+			end
+			button.t:SetAllPoints()
 			
-			-- execute the above as a single command
-			local cmdRun = assert(loadstring(obj))
-			cmdRun()
+
+			-- Create button background
+			local buttonBackdrop = CreateFrame("Frame", btnType .. "buttonBackdropFrame" .. i, UIParent)
+			buttonBackdrop:SetPoint("CENTER", buttonStore[btnType .. i], "CENTER", 0, 0)
+			buttonBackdrop:SetSize(btnSize + backdropPadding * 2, btnSize + backdropPadding * 2)
+
+			buttonBackdrop.texture = buttonBackdrop:CreateTexture(nil, "BACKGROUND")
+			buttonBackdrop.texture:ClearAllPoints(buttonBackdrop)
+			buttonBackdrop.texture:SetAllPoints(buttonBackdrop)
+			buttonBackdrop:SetBackdrop({bgFile = "Interface\\ChatFrame\\ChatFrameBackground"})
+			buttonBackdrop:SetBackdropColor(backdropRed, backdropGreen, backdropBlue, backdropAlpha)
+			backdropStore[btnType .. i] = buttonBackdrop
+		
+			backdropStore[btnType .. i]:Hide()
+			buttonStore[btnType .. i]:Hide()
+			
+			yOffset = yOffset + yOffsetGrowth
+			xOffset = xOffset + xOffsetGrowth
 		end
 	end
 end
 
+-- Show the menu buttons
 function addon:showButtons(btnType, count)
 	for i = 1, count, 1 do
-		local obj = btnType .. [[Button]] .. i .. [[:Show()
-		]] .. btnType .. [[Button]] .. i .. [[BackdropFrame:Show()]]
-		
-		local cmdRun = assert(loadstring(obj))
-		cmdRun()
+		buttonStore[btnType .. i]:Show()
+		backdropStore[btnType .. i]:Show()
 	end
 end
 
+-- Hide the menu buttons
 function addon:hideButtons(btnType, count)
 	for i = 1, count, 1 do
-		local obj = btnType .. [[Button]] .. i .. [[:Hide()
-		]] .. btnType .. [[Button]] .. i .. [[BackdropFrame:Hide()]]
-		
-		local cmdRun = assert(loadstring(obj))
-		cmdRun()
+		buttonStore[btnType .. i]:Hide()
+		backdropStore[btnType .. i]:Hide()
+	end
+end
+
+-- Get tooltip information
+function addon:getTooltipNumber(spellName)
+	local slot = 1
+	while true do
+		local spell, rank = GetSpellBookItemName(slot, BOOKTYPE_SPELL)
+		if rank ~= nil then
+			spell = spell .. "(" .. rank .. ")"
+		end
+
+		if (not spell) then
+			break
+		elseif (spell == spellName) then
+			return slot
+		end
+	   slot = slot + 1
 	end
 end
 
@@ -524,14 +695,15 @@ function addon:getSV(category, variable)
 	end
 end
 
-function addon:getButtonType(btnNumber)
-	local buttontbl = MageButtonsDB["buttons"]
-	if ( buttontbl[btnNumber] == "none" ) then
-		return "none"
-	else
-		return buttontbl[btnNumber]
-	end
-end
+-- Not used
+-- function addon:getButtonType(btnNumber)
+	-- local buttontbl = MageButtonsDB["buttons"]
+	-- if ( buttontbl[btnNumber] == "none" ) then
+		-- return "none"
+	-- else
+		-- return buttontbl[btnNumber]
+	-- end
+-- end
 
 -- Register Events
 MageButtonsConfig:RegisterEvent("ADDON_LOADED")

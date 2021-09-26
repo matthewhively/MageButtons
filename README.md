@@ -24,12 +24,11 @@ At any time, if the owner wishes to take over this repository it will be transfe
 - First time loading it will default to a set button order, need to go into Options and actually set them for them to save (will say "not set")
 
 ## Known issues / TODO:
-- Add tooltips
 - Keybindings are wonky, probably because I'm doing something wrong, but they mostly work?
-- Need to reload UI for options to take hold
 - Not sure if the Polymorph button is worth it, was thinking it would be nice to easily switch from Sheep to Turtle to Pig
 - Could add AI for easy access to lower ranks for lower level players
 - Lock/unlock from options panel is out of sync with minimap click
 
 ## Revision History
+2019-07-28 - 0.99 - Largely rewritten, most settings changes should now occur without needing to reload
 2019-06-23 - 0.90 - Initial Classic WoW Beta release

@@ -28,10 +28,10 @@ usageText:SetJustifyH("LEFT")
 usageText:SetText("Button Order (left to right, or top to bottom):")
 
 -- Bottom usage text
-local usageText2 = mbPanel:CreateFontString(nil, "ARTWORK", "GameFontHighlightLarge")
+local usageText2 = mbPanel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
 usageText2:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 85, -420)
-usageText2:SetJustifyH("LEFT")
-usageText2:SetText("Press Okay then Reload UI (/reload) to see changes")
+usageText2:SetJustifyH("CENTER")
+usageText2:SetText("Press Okay to see changes, then Reload UI (/reload) to finalize\n(button textures will not update correctly until reloaded)")
 
 ---------------------------------
 -- Checkbox for Button Borders --
@@ -157,7 +157,7 @@ mbLockCheck:SetScript("OnClick",
 			MageButtonsConfig:SetMovable(false)
 			MageButtonsConfig:EnableMouse(false)
 			MageButtonsFrame:SetBackdropColor(0, 0, 0, 0)
-			--lockStatus = 0
+			lockStatus = 1
 		else 
 			if ( debug >= 1 ) then print("Unchecked :(") end
 			lockTbl = {
@@ -169,7 +169,7 @@ mbLockCheck:SetScript("OnClick",
 			MageButtonsConfig:SetMovable(true)
 			MageButtonsConfig:EnableMouse(true)
 			MageButtonsFrame:SetBackdropColor(0, .7, 1, 1)
-			--lockStatus = 1
+			lockStatus = 0
 		end
 		
 	end
@@ -457,7 +457,7 @@ local function onevent(self, event, arg1, ...)
 		
 		buttonDirectionBox.Label = buttonDirectionBox:CreateFontString(nil, 'ARTWORK', 'GameFontWhiteSmall')
 		buttonDirectionBox.Label:SetPoint("BOTTOMLEFT", buttonDirectionBox, "TOPLEFT", 10, 1)
-		buttonDirectionBox.Label:SetText("Growth Direction:")
+		buttonDirectionBox.Label:SetText("Menu Growth Direction:")
 		
 		---------------------------------------
 		-- Color picker for background color --
@@ -641,6 +641,19 @@ mbPanel.okay = function (self)
 	MageButtonsDB["growth"] = directionTbl
 	MageButtonsDB["bgcolor"] = bgColorTbl
 	MageButtonsDB["buttonSettings"] = buttonSettingsTbl
+	
+	growthDir = directionTbl["direction"]
+	menuDir = directionTbl["buttons"]
+	btnSize = buttonSettingsTbl["size"]
+	padding = buttonSettingsTbl["padding"]
+	if mbBorderCheck:GetChecked() then border = 1 else border = 0 end
+	backdropPadding = buttonSettingsTbl["bgpadding"]
+	backdropRed = bgColorTbl["red"]
+	backdropGreen = bgColorTbl["green"]
+	backdropBlue = bgColorTbl["blue"]
+	backdropAlpha = bgColorTbl["alpha"]
+	
+	MageButtons:makeBaseButtons()
 	
 	if debug >= 1 then print("saved") end
 end
