@@ -1,0 +1,12 @@
+## Interface: 11302
+## Author: pjp (Pixel-Draka (US) / Moxie-WoW Class Beta PvP)
+## Version: 0.90
+## Title: MageButtons
+## Notes: Combines mutliple ranks/types of spells into a single button
+## SavedVariablesPerCharacter: MageButtonsDB
+## OptionalDeps: 
+## DefaultState: enabled
+
+embeds.xml
+MageButtons.lua
+config.lua
