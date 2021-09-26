@@ -1,7 +1,7 @@
 # MageButtons
 Wow Classic/TBC Addon MageButtons
 
-This addon is unofficially hosted on behalf of the Author/owner Moxey on wowinterface.com
+This addon is unofficially hosted on behalf of the Author/owner Moxey on wowinterface.com aka: pjp (Pixel-Draka (US) / Moxie-Herod (US))
 
 I am providing a git repo to provide a way to collaberate and track changes.
 
@@ -29,8 +29,10 @@ At any time, if the owner wishes to take over this repository it will be transfe
 - Not sure if the Polymorph button is worth it, was thinking it would be nice to easily switch from Sheep to Turtle to Pig
 - Could add AI for easy access to lower ranks for lower level players
 - Lock/unlock from options panel is out of sync with minimap click
+- New spells learned from trainers are not automatically added, need to /reload
 
 ## Revision History
+2019-08-15 - 1.00 - Added mouseover option, minimap icon will now default to on
 2019-08-11 - 0.99a - Minimap button should now stay hidden
 2019-07-28 - 0.99 - Largely rewritten, most settings changes should now occur without needing to reload
 2019-06-23 - 0.90 - Initial Classic WoW Beta release

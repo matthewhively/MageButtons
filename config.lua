@@ -29,9 +29,16 @@ usageText:SetText("Button Order (left to right, or top to bottom):")
 
 -- Bottom usage text
 local usageText2 = mbPanel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
-usageText2:SetPoint("TOPLEFT", title, "BOTTOMLEFT", 85, -420)
+usageText2:SetPoint("TOP", 0, -420)
 usageText2:SetJustifyH("CENTER")
-usageText2:SetText("Press Okay to see changes, then Reload UI (/reload) to finalize\n(button textures will not update correctly until reloaded)")
+usageText2:SetText("Some changes require a reload UI (/reload) to work, such as reordering menus.")
+
+if UnitLevel("player") < 60 then
+	local usageText3 = mbPanel:CreateFontString(nil, "ARTWORK", "GameFontNormalLarge")
+	usageText3:SetPoint("TOP", usageText2, "BOTTOM", 0, -10)
+	usageText3:SetJustifyH("CENTER")
+	usageText3:SetText("And learning new spells from trainers.")
+end
 
 ---------------------------------
 -- Checkbox for Button Borders --
@@ -174,6 +181,50 @@ mbLockCheck:SetScript("OnClick",
 		
 	end
 );
+
+----------------------------
+-- Checkbox for mouseover --
+----------------------------
+local mbMouseoverCheck = CreateFrame("CheckButton", "mbMouseoverCheck", mbPanel, "InterfaceOptionsCheckButtonTemplate")
+mbMouseoverCheckText:SetText("Mouseover")
+mbMouseoverCheck.tooltipText = "Display menu buttons on mouseover.\n\nNote: Background Frame Padding must be >= half of Button Padding to work.\nOtherwise there will be gaps between buttons and the menus will close."
+
+-- Load the current checkbox state when the options panel opens
+mbMouseoverCheck:SetScript("OnShow", 
+	function()
+		local mouseoverStatus = MageButtons:getSV("mouseover", "mouseover") or 0
+		
+		if ( mouseoverStatus == 1 ) then
+			mbMouseoverCheck:SetChecked(true)
+		else
+			mbMouseoverCheck:SetChecked(false)
+		end
+	end
+)
+mbMouseoverCheck:SetPoint("LEFT", mbMapCheck, "RIGHT", 150, 0)
+
+-- Store checkbox state in SavedVariables
+mbMouseoverCheck:SetScript("OnClick", 
+	function()
+		if (mbMouseoverCheck:GetChecked()) then 
+			if ( debug >= 1 ) then print("Checked!") end
+			moTbl = {
+				mouseover = 1,
+			}
+
+			MageButtonsDB["mouseover"] = moTbl
+		else 
+			if ( debug >= 1 ) then print("Unchecked :(") end
+			moTbl = {
+				mouseover = 0,
+			}
+
+			MageButtonsDB["mouseover"] = moTbl
+		end
+		
+	end
+);
+
 ----------------
 --   Events   --
 ----------------

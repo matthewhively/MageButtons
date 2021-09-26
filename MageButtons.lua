@@ -81,7 +81,7 @@ backdropAnchor = "TOP"
 backdropParentAnchor = "BOTTOM"
 --local backdropOffset = 0
 local frameBG = "Interface\\ChatFrame\\ChatFrameBackground"
-local growthDir, menuDir, btnSize, padding, border, backdropPadding, backdropRed, backdropGreen, backdropBlue, backdropAlpha = nil, nil, nil, nil, nil, nil, nil, nil, nil, nil
+local growthDir, menuDir, btnSize, padding, border, backdropPadding, backdropRed, backdropGreen, backdropBlue, backdropAlpha, mouseover = nil, nil, nil, nil, nil, nil, nil, nil, nil, nil, nil
 
 
 ------------------
@@ -260,7 +260,7 @@ local function onevent(self, event, arg1, ...)
 			})
 			
 			-- display the minimap icon?
-			local mmap = addon:getSV("minimap", "icon")
+			local mmap = addon:getSV("minimap", "icon") or 1
 			if mmap == 1 then
 				MageButtonsMinimapIcon:Register("mageButtonsIcon", MageButtonsMinimapData, MageButtonsDB)
 				addon:maptoggle(1)
@@ -390,6 +390,7 @@ function addon:makeBaseButtons()
 	backdropGreen = addon:getSV("bgcolor", "green") or .1
 	backdropBlue = addon:getSV("bgcolor", "blue") or .1
 	backdropAlpha = addon:getSV("bgcolor", "alpha") or 1
+	mouseover = MageButtons:getSV("mouseover", "mouseover") or 0
 
 	local keybindTable = {"MAGEBUTTONS_BUTTON1", "MAGEBUTTONS_BUTTON2", "MAGEBUTTONS_BUTTON3", "MAGEBUTTONS_BUTTON4", "MAGEBUTTONS_BUTTON5", "MAGEBUTTONS_BUTTON6"}
 	
@@ -465,10 +466,20 @@ function addon:makeBaseButtons()
 				GameTooltip:SetPoint("BOTTOMLEFT", baseButton, "TOPRIGHT", 10, 5)
 				GameTooltip:SetSpellBookItem(MageButtons:getTooltipNumber(baseSpell), BOOKTYPE_SPELL)
 				GameTooltip:Show()
+				
+				if mouseover == 1 then
+					-- Display menu on mouseover
+					MageButtons:showButtons(btnType, spellCount)
+				end
 			end)
 			
 			baseButton:SetScript("OnLeave",function(self,motion)
 				GameTooltip:Hide()
+				
+				if mouseover == 1 then
+					-- Hide menu
+					MageButtons:hideButtons(btnType, spellCount)
+				end
 			end)
 			
 			-- Store the button in a table for easy access
@@ -495,6 +506,18 @@ function addon:makeBaseButtons()
 			baseButtonBackdrops[btnType].texture:SetAllPoints(baseButtonBackdrops[btnType])
 			baseButtonBackdrops[btnType]:SetBackdrop({bgFile = "Interface\\ChatFrame\\ChatFrameBackground"})
 			baseButtonBackdrops[btnType]:SetBackdropColor(backdropRed, backdropGreen, backdropBlue, backdropAlpha)
+			
+			if mouseover == 1 then
+				baseButtonBackdrops[btnType]:SetScript("OnEnter",function(self,motion)
+					-- Display menu on mouseover
+					MageButtons:showButtons(btnType, spellCount)
+				end)
+
+				baseButtonBackdrops[btnType]:SetScript("OnLeave",function(self,motion)
+					-- Hide menu
+					MageButtons:hideButtons(btnType, spellCount)
+				end)
+			end
 
 			-- Show the backdrop
 			baseButtons[btnType]:Show()
@@ -546,6 +569,9 @@ function addon:makeButtons(btnType, typeTable)
 	local parentAnchor = nil
 	local xOffset = 0
 	local yOffset = 0
+	
+	local spellCounts = {Water = #WaterTable, Food = #FoodTable, Teleports = #TeleportsTable, Portals = #PortalsTable, Gems = #GemsTable, Polymorph = #PolymorphTable}
+	local spellCount = spellCounts[btnType]
 	
 	--print(btnSize, menuDir)
 
@@ -614,8 +640,23 @@ function addon:makeButtons(btnType, typeTable)
 					GameTooltip:SetPoint("BOTTOMLEFT", self, "TOPRIGHT", 10, 5)
 					
 					GameTooltip:SetSpellBookItem(MageButtons:getTooltipNumber(typeTable[i]), BOOKTYPE_SPELL)
+					
+					if mouseover == 1 then
+						-- Display menu on mouseover
+						MageButtons:showButtons(btnType, spellCount)
+					end
+					
 					GameTooltip:Show()
-				end)	
+				end)
+
+				baseButtons[btnType]:SetScript("OnLeave",function(self,motion)
+					GameTooltip:Hide()
+					
+					if mouseover == 1 then
+						-- Hide menu
+						MageButtons:hideButtons(btnType, spellCount)
+					end
+				end)
 			end)
 			
 			-- Tooltip
@@ -626,10 +667,20 @@ function addon:makeButtons(btnType, typeTable)
 				
 				GameTooltip:SetSpellBookItem(MageButtons:getTooltipNumber(typeTable[i]), BOOKTYPE_SPELL)
 				GameTooltip:Show()
+				
+				if mouseover == 1 then
+					-- Display menu on mouseover
+					addon:showButtons(btnType, spellCount)
+				end
 			end)
 			
 			button:SetScript("OnLeave",function(self,motion)
 				GameTooltip:Hide()
+				
+				if mouseover == 1 then
+					-- Hide menu
+					addon:hideButtons(btnType, spellCount)
+				end
 			end)
 			
 			-- Store the button in a table
@@ -654,6 +705,20 @@ function addon:makeButtons(btnType, typeTable)
 			buttonBackdrop.texture:SetAllPoints(buttonBackdrop)
 			buttonBackdrop:SetBackdrop({bgFile = "Interface\\ChatFrame\\ChatFrameBackground"})
 			buttonBackdrop:SetBackdropColor(backdropRed, backdropGreen, backdropBlue, backdropAlpha)
+			
+			if mouseover == 1 then
+				buttonBackdrop:SetScript("OnEnter",function(self,motion)
+					-- Display menu on mouseover
+					addon:showButtons(btnType, spellCount)
+				end)
+				
+				buttonBackdrop:SetScript("OnLeave",function(self,motion)
+					-- Hide menu
+					addon:hideButtons(btnType, spellCount)
+				end)
+			end
+			
+			
 			backdropStore[btnType .. i] = buttonBackdrop
 		
 			backdropStore[btnType .. i]:Hide()
