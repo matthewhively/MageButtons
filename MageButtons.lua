@@ -105,7 +105,7 @@ MageButtonsConfig:SetSize(40, 10)
 
 MageButtonsFrame.texture = MageButtonsFrame:CreateTexture(nil, "BACKGROUND")
 MageButtonsFrame.texture:SetAllPoints(MageButtonsFrame)
-MageButtonsFrame:SetBackdrop({bgFile = [[Interface\ChatFrame\ChatFrameBackground]]})
+MageButtonsFrame:SetBackdrop({bgFile = frameBG})
 MageButtonsFrame:SetBackdropColor(0, 0, 0, 0)
 
 local buttonTypes = { "Water", "Food", "Teleports", "Portals", "Gems", "Polymorph"}
@@ -491,7 +491,7 @@ function addon:makeBaseButtons()
 			baseButtonBackdrops[btnType].texture = baseButtonBackdrops[btnType]:CreateTexture(nil, "BACKGROUND")
 			baseButtonBackdrops[btnType].texture:ClearAllPoints()
 			baseButtonBackdrops[btnType].texture:SetAllPoints(baseButtonBackdrops[btnType])
-			baseButtonBackdrops[btnType]:SetBackdrop({bgFile = "Interface\\ChatFrame\\ChatFrameBackground"})
+			baseButtonBackdrops[btnType]:SetBackdrop({bgFile = frameBG})
 			baseButtonBackdrops[btnType]:SetBackdropColor(backdropRed, backdropGreen, backdropBlue, backdropAlpha)
 			
 			if mouseover == 1 then
@@ -690,7 +690,7 @@ function addon:makeButtons(btnType, typeTable)
 			buttonBackdrop.texture = buttonBackdrop:CreateTexture(nil, "BACKGROUND")
 			buttonBackdrop.texture:ClearAllPoints(buttonBackdrop)
 			buttonBackdrop.texture:SetAllPoints(buttonBackdrop)
-			buttonBackdrop:SetBackdrop({bgFile = "Interface\\ChatFrame\\ChatFrameBackground"})
+			buttonBackdrop:SetBackdrop({bgFile = frameBG})
 			buttonBackdrop:SetBackdropColor(backdropRed, backdropGreen, backdropBlue, backdropAlpha)
 			buttonBackdrop:SetFrameStrata("HIGH")
 			
