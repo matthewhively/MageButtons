@@ -54,7 +54,6 @@ SlashCmdList["MAGEBUTTONS"] = function(inArgs)
 		cmdarg, tog = string.split(" ", wArgs)
 		MageButtons:maptoggle(tog)
 	elseif wArgs == "move" or wArgs == "unlock" then
-		print("move")
 		lockStatus = addon:getSV("framelock", "lock")
 		if lockStatus == 1 then
 			addon:unlockAnchor()
@@ -564,7 +563,7 @@ function addon:makeButtons(btnType, typeTable)
 	-- Create buttons of the requested type
 	-- type = Portal, Water, etc
 	-- typeTable = table of values from the start of this file (WaterTable, etc)
-	-- i = index to define uniqe button names (PortalsButton1, PortalsButton2, etc)
+	-- i = index to define unique button names (PortalsButton1, PortalsButton2, etc)
 	local btnAnchor = nil
 	local parentAnchor = nil
 	local xOffset = 0
@@ -625,6 +624,7 @@ function addon:makeButtons(btnType, typeTable)
 
 			button:SetPoint(btnAnchor, baseButtons[btnType], parentAnchor, xOffset, yOffset)
 			button:SetSize(btnSize, btnSize)
+			button:SetFrameStrata("HIGH")
 			button:SetScript("OnClick", function()
 				MageButtons:hideButtons(btnType, #typeTable)
 				baseButtons[btnType]:SetAttribute("spell", typeTable[i])
