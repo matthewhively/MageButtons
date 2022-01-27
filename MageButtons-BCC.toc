@@ -1,0 +1,11 @@
+## Interface: 20503
+## Author: pjp (Pixel-Draka (US) / Moxie-Herod (US)) & Endymon
+## Version: 1.05
+## Title: MageButtons
+## Notes: Combines mutliple ranks/types of spells into a single button
+## SavedVariablesPerCharacter: MageButtonsDB
+## DefaultState: enabled
+
+embeds.xml
+MageButtons.lua
+config.lua

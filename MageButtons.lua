@@ -145,11 +145,12 @@ local WaterTable, FoodTable, TeleportsTable, PortalsTable, GemsTable, PolymorphT
 --- Events ---
 --------------
 local function onevent(self, event, addonName, ...)
-	if (addonName ~= "MageButtons" or  event ~= "ADDON_LOADED") then
+	if (addonName ~= "MageButtons" or event ~= "ADDON_LOADED") then
 		return
 	end
 	--print(event)
-		
+
+	-- NOTE: I think the BCC only spellIDs will be fine to define, they just don't exist in vanilla, so they'll never be active!
 	-- Set up lists of spells
 	-- Bottom <--> Top
 	local WaterSpells = {5504, 5505, 5506, 6127, 10138, 10139, 10140, 37420, 43987, 27090}
@@ -780,7 +781,7 @@ function addon:getTooltipNumber(spellName)
 		elseif (spell == spellName) then
 			return slot
 		end
-	   slot = slot + 1
+		slot = slot + 1
 	end
 end
 
